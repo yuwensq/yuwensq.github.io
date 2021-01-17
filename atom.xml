@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://https://yuwensq.github.io</id>
-    <title>Gridea</title>
-    <updated>2021-01-17T08:08:16.974Z</updated>
+    <title>yuwenのblog</title>
+    <updated>2021-01-17T08:41:34.949Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://https://yuwensq.github.io"/>
     <link rel="self" href="https://https://yuwensq.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
+    <subtitle>がんばれ！</subtitle>
     <logo>https://https://yuwensq.github.io/images/avatar.png</logo>
     <icon>https://https://yuwensq.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2021, Gridea</rights>
+    <rights>All rights reserved 2021, yuwenのblog</rights>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://https://yuwensq.github.io/post/hello-gridea/</id>
