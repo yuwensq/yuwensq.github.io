@@ -1,0 +1,780 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="yuwensq">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="计算机网络大作业第二部分 徐文斌 计算机科学与技术 2010234  实验要求在实验3-1的基础上，将停等机制改成基于滑动窗口的流量控制机制，采用固定窗口大小，支持累积确认，完成给定测试文件的传输。 实验设计实验原理滑动窗口滑动窗口(Sliding window)是一种流量控制技术。如果网络通信中，通信双方不会考虑网络的拥挤情况直接发送数据，由于大家不知道网络拥塞状况，同时发送数据，则会导致中间节">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计网大作业二">
+<meta property="og:url" content="http://example.com/2022/12/14/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%BA%8C/index.html">
+<meta property="og:site_name" content="Binのblog">
+<meta property="og:description" content="计算机网络大作业第二部分 徐文斌 计算机科学与技术 2010234  实验要求在实验3-1的基础上，将停等机制改成基于滑动窗口的流量控制机制，采用固定窗口大小，支持累积确认，完成给定测试文件的传输。 实验设计实验原理滑动窗口滑动窗口(Sliding window)是一种流量控制技术。如果网络通信中，通信双方不会考虑网络的拥挤情况直接发送数据，由于大家不知道网络拥塞状况，同时发送数据，则会导致中间节">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202211181112058.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021513087.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212031104524.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212031104600.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021603441.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021631765.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021632873.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021611641.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021612400.jpg">
+<meta property="article:published_time" content="2022-12-14T08:18:06.000Z">
+<meta property="article:modified_time" content="2022-12-14T08:18:59.430Z">
+<meta property="article:author" content="yuwensq">
+<meta property="article:tag" content="计网">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202211181112058.jpg">
+  
+  
+  
+  <title>计网大作业二 - Binのblog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"maxyD2wC7xK4zL63tQzM6waA-MdYXbMMI","app_key":"go2gAUxZcapaCi3vX2ERfnxg","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>BIN</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="计网大作业二"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-14 16:18" pubdate>
+          2022年12月14日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          83 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">计网大作业二</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="计算机网络大作业第二部分"><a href="#计算机网络大作业第二部分" class="headerlink" title="计算机网络大作业第二部分"></a>计算机网络大作业第二部分</h1><blockquote>
+<p>徐文斌 计算机科学与技术 2010234</p>
+</blockquote>
+<h2 id="实验要求"><a href="#实验要求" class="headerlink" title="实验要求"></a>实验要求</h2><p>在实验3-1的基础上，将停等机制改成基于滑动窗口的流量控制机制，采用固定窗口大小，支持累积确认，完成给定测试文件的传输。</p>
+<h2 id="实验设计"><a href="#实验设计" class="headerlink" title="实验设计"></a>实验设计</h2><h3 id="实验原理"><a href="#实验原理" class="headerlink" title="实验原理"></a>实验原理</h3><h4 id="滑动窗口"><a href="#滑动窗口" class="headerlink" title="滑动窗口"></a>滑动窗口</h4><p>滑动窗口(Sliding window)是一种流量控制技术。如果网络通信中，通信双方不会考虑网络的拥挤情况直接发送数据，由于大家不知道网络拥塞状况，同时发送数据，则会导致中间节点阻塞掉包，谁也发不了数据，所以就有了滑动窗口机制来解决此问题。 TCP中采用滑动窗口来进行传输控制，滑动窗口的大小意味着接收方还有多大的缓冲区可以用于接收数据。发送方可以通过滑动窗口的大小来确定应该发送多少字节的数据。当滑动窗口为0时，发送方一般不能再发送数据报，但有两种情况除外，一种情况是可以发送紧急数据，例如，允许用户终止在远端机上的运行进程。另一种情况是发送方可以发送一个1字节的数据报来通知接收方重新声明它希望接收的下一字节及发送方的滑动窗口大小。</p>
+<h4 id="累计确认"><a href="#累计确认" class="headerlink" title="累计确认"></a>累计确认</h4><p>停等协议虽然编写简单，效果稳定，但是其效率比较低，实际中很难利用其进行大量的数据包发送，所以一般情况下，采用流水线的方式进行数据包的发送和接收。Go-Back-N协议采用累积确认的方式，GBN的关键是发送方能够在收到确认之前发送多个分组，但接收方只能缓存一个分组。发送方为发送出去的分组保留副本，直到来自接收方确认达到。</p>
+<h3 id="协议设计"><a href="#协议设计" class="headerlink" title="协议设计"></a>协议设计</h3><h4 id="1-报文格式"><a href="#1-报文格式" class="headerlink" title="1. 报文格式"></a>1. 报文格式</h4><p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202211181112058.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>报文由10字节的定长报文首部和变长的数据部分组成。</p>
+<p>首部各字段作用如下：</p>
+<ul>
+<li><p>0-15位为传输的数据报的序列号，序列号空间为0-65535。</p>
+</li>
+<li><p>16-31位为ack确认值，用于服务器对接收到的客户端的数据进行确认。</p>
+</li>
+<li><p>32-47位为标志位，目前只使用低5位，从低至高分别为SYN、ACK、FIN、LAS、RST，其中LAS位用于标识当前数据包是承载着所发送文件的最后一个数据包。</p>
+</li>
+<li><p>48-63位为校验和，用于实现差错检测。</p>
+</li>
+<li><p>64-79位为数据部分的长度。</p>
+</li>
+</ul>
+<h4 id="2-滑动窗口"><a href="#2-滑动窗口" class="headerlink" title="2.滑动窗口"></a>2.滑动窗口</h4><p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021513087.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>如上图所示，窗口分为左边界send_base、发送边界nextseqnum和右边界，窗口大小固定。窗口左边界左侧为已经发送并得到确认的数据，左边界到发送边界的数据为已发送但未得到确认的数据，发送边界到右边界为等待发送的数据，右边界右侧为不可发送的数据。发送数据时，判断nextseqnum是否超过有边界，如果没有超过则发送序列号为nextseqnum的数据包。</p>
+<h4 id="3-握手与挥手"><a href="#3-握手与挥手" class="headerlink" title="3.握手与挥手"></a>3.握手与挥手</h4><p>握手与挥手和上次实验一致，在此不做过多的说明。</p>
+<h4 id="4-数据传输"><a href="#4-数据传输" class="headerlink" title="4.数据传输"></a>4.数据传输</h4><p>对于数据的发送和接收采用课本中GBN的状态机。</p>
+<p>发送端状态机：<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212031104524.png" srcset="/img/loading.gif" lazyload></p>
+<p>接收端状态机：<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212031104600.png" srcset="/img/loading.gif" lazyload></p>
+<p>数据在传输时，将一个文件封装到多个报文中进行分段传输。在传输时，发送端无需等待接收到上一个发送包的序号的ACK报文便能发送下一个数据包，可以继续发送直到已发送但未确认的数据包的数目达到窗口大小。接收端接收到了一个数据包，先进行差错校验，如果检查无误，而且该报文的序列号为接收端的期望的序列号，则会接受该报文，并向发送端发回一个对该报文序列号的ACK报文；如果该报文的序列号不是接收端期望的序列号，接收端会将该报文丢弃，并向发送端发回一个对最后一次正确收到的序列号的ACK报文。<br>发送端如果长时间没有接收到任何对已发送的数据包的ACK报文，则其会进行超时重传，将当前窗口中所有的已发送但未确认的报文重发一次。</p>
+<p>在最后，发送方需要向接收端发送一个LAS&#x3D;1的报文，以通知接收端文件传输结束，进入挥手阶段。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>这里只展示本次实验相对于第一次实验代码的大的修改部分。</p>
+<h3 id="报文首部和标志位定义"><a href="#报文首部和标志位定义" class="headerlink" title="报文首部和标志位定义"></a>报文首部和标志位定义</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">define</span> MSS 6666 <span class="hljs-comment">// 最大报文段长度</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> WND 10   <span class="hljs-comment">// 窗口大小</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> SYN 0x1</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> ACK 0x2</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> FIN 0x4</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> LAS 0x8</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> RST 0x10</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> TCP_SYN_RETRIES 5</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> TCP_WAV_RETRIES 5</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> TIMEOUT (CLOCKS_PER_SEC / 2)</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> pack(push)</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> pack(1)</span><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Header</span> &#123; <span class="hljs-comment">// header结构体</span><br>	u_short seq;<br>	u_short ack;<br>	u_short flag;<br>	u_short checksum;<br>	u_short length;<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">set_args</span><span class="hljs-params">(u_short seq, u_short ack, u_short flag, u_short checksum, u_short length)</span> </span>&#123;<br>		<span class="hljs-keyword">this</span>-&gt;seq = seq;<br>		<span class="hljs-keyword">this</span>-&gt;ack = ack;<br>		<span class="hljs-keyword">this</span>-&gt;flag = flag;<br>		<span class="hljs-keyword">this</span>-&gt;checksum = checksum;<br>		<span class="hljs-keyword">this</span>-&gt;length = length;<br>	&#125;<br>&#125;;<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> pack(pop)</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="报文结构体"><a href="#报文结构体" class="headerlink" title="报文结构体"></a>报文结构体</h3><p>由于实现了滑动串口，程序需要缓存当前已经发送但未被确认的报文。这里我定义报文结构体用来对这些未被确认的报文进行存储。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> pack(push)</span><br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> pack(1)</span><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Packet</span> &#123; <span class="hljs-comment">// packet结构体</span><br>	Header hdr; <span class="hljs-comment">// 报文首部</span><br>	<span class="hljs-type">char</span> data[MSS]; <span class="hljs-comment">// 数据段</span><br>&#125;;<br><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> pack(pop)</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="计时器类"><a href="#计时器类" class="headerlink" title="计时器类"></a>计时器类</h3><p>相比于rdt3.0，GBN的计时机制更为复杂，且程序利用多线程进行编写，因此这里我编写了一个计时器类timer，用于计时功能。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">timer</span> &#123;<br><span class="hljs-keyword">private</span>:<br>	mutex mtx; 		<span class="hljs-comment">// 锁，防止出现竞争状态</span><br>	<span class="hljs-type">bool</span> valid; 	<span class="hljs-comment">// 计时器是否开启</span><br>	u_int esti_rtt; <span class="hljs-comment">// 超时时间</span><br>	<span class="hljs-type">clock_t</span> start; 	<span class="hljs-comment">// 计时起点</span><br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-built_in">timer</span>() : <span class="hljs-built_in">esti_rtt</span>(TIMEOUT) &#123;&#125;;<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">start_timer</span><span class="hljs-params">(u_int esti_rtt)</span> </span>&#123;	<span class="hljs-comment">// 开启计时器</span><br>		mtx.<span class="hljs-built_in">lock</span>();<br>		valid = <span class="hljs-literal">true</span>;<br>		<span class="hljs-keyword">this</span>-&gt;esti_rtt = esti_rtt;<br>		start = <span class="hljs-built_in">clock</span>();<br>		mtx.<span class="hljs-built_in">unlock</span>();<br>	&#125;;<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">start_timer</span><span class="hljs-params">()</span> </span>&#123;	<span class="hljs-comment">// 开启计时器</span><br>		mtx.<span class="hljs-built_in">lock</span>();<br>		valid = <span class="hljs-literal">true</span>;<br>		start = <span class="hljs-built_in">clock</span>();<br>		mtx.<span class="hljs-built_in">unlock</span>();<br>	&#125;<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">stop_timer</span><span class="hljs-params">()</span> </span>&#123;		<span class="hljs-comment">// 关闭计时器</span><br>		mtx.<span class="hljs-built_in">lock</span>();<br>		valid = <span class="hljs-literal">false</span>;<br>		mtx.<span class="hljs-built_in">unlock</span>();<br>	&#125;<br>	<span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">time_out</span><span class="hljs-params">()</span> </span>&#123;		<span class="hljs-comment">// 判断是否超时</span><br>		<span class="hljs-keyword">return</span> valid &amp;&amp; (<span class="hljs-built_in">clock</span>() - start &gt;= esti_rtt);<br>	&#125;<br>	<span class="hljs-function"><span class="hljs-type">float</span> <span class="hljs-title">remain_time</span><span class="hljs-params">()</span> </span>&#123;	<span class="hljs-comment">// 打印距离超时的剩余时间，用于调试</span><br>		<span class="hljs-keyword">return</span> (esti_rtt - (<span class="hljs-built_in">clock</span>() - start)) / <span class="hljs-number">1000.0</span> &lt;= <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : (esti_rtt - (<span class="hljs-built_in">clock</span>() - start)) / <span class="hljs-number">1000.0</span>;<br>	&#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h3 id="传输数据"><a href="#传输数据" class="headerlink" title="传输数据"></a>传输数据</h3><ul>
+<li>发送端发送单个数据包</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">rdt_send</span><span class="hljs-params">(SOCKET *server, SOCKADDR_IN *server_addr, <span class="hljs-type">char</span> *msg, <span class="hljs-type">int</span> len, <span class="hljs-type">bool</span> last = <span class="hljs-literal">false</span>)</span> </span>&#123;<br>	<span class="hljs-built_in">assert</span>(len &lt;= MSS);<br>	<span class="hljs-comment">// 窗口满了就阻塞，窗口有空余时开始发送当前数据包</span><br>	<span class="hljs-keyword">while</span> (nextseqnum &gt;= base + WND) &#123;<br>		<span class="hljs-keyword">continue</span>;<br>	&#125;<br>	Packet *packet = <span class="hljs-keyword">new</span> Packet;<br>	packet-&gt;hdr.<span class="hljs-built_in">set_args</span>(nextseqnum, <span class="hljs-number">0</span>, last ? LAS : <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, len); <br>	<span class="hljs-built_in">memcpy</span>(packet-&gt;data, msg, len);<br>	u_short chksum = <span class="hljs-built_in">checksum</span>((<span class="hljs-type">char</span>*)packet, <span class="hljs-built_in">sizeof</span>(Header) + len);<br>	packet-&gt;hdr.checksum = chksum;<br>	buffer_lock.<span class="hljs-built_in">lock</span>();<br>	gbn_buffer.<span class="hljs-built_in">push_back</span>(packet);	<span class="hljs-comment">// 缓存当前发送的数据包，便于后续的超时重传</span><br>	buffer_lock.<span class="hljs-built_in">unlock</span>();<br>	<span class="hljs-built_in">sendto</span>(*server, (<span class="hljs-type">char</span>*)packet, len + <span class="hljs-built_in">sizeof</span>(Header), <span class="hljs-number">0</span>, (sockaddr*)server_addr, <span class="hljs-built_in">sizeof</span>(SOCKADDR_IN));				<span class="hljs-comment">// 发送当前数据包</span><br>	print_lock.<span class="hljs-built_in">lock</span>();<br>	cout &lt;&lt; <span class="hljs-string">&quot;向服务器发送数据包，首部为: seq:&quot;</span> &lt;&lt; packet-&gt;hdr.seq &lt;&lt; <span class="hljs-string">&quot;, ack:&quot;</span> &lt;&lt; packet-&gt;hdr.ack &lt;&lt; <span class="hljs-string">&quot;, flag:&quot;</span> &lt;&lt; packet-&gt;hdr.flag &lt;&lt; <span class="hljs-string">&quot;, checksum:&quot;</span> &lt;&lt; packet-&gt;hdr.checksum &lt;&lt; <span class="hljs-string">&quot;, len:&quot;</span> &lt;&lt; packet-&gt;hdr.length &lt;&lt; <span class="hljs-string">&quot;, 剩余窗口大小:&quot;</span> &lt;&lt; WND - (nextseqnum - base) - <span class="hljs-number">1</span> &lt;&lt;endl;<br>	print_lock.<span class="hljs-built_in">unlock</span>();<br>	<span class="hljs-keyword">if</span> (base == nextseqnum) &#123;<br>		my_timer.<span class="hljs-built_in">start_timer</span>();		<span class="hljs-comment">// 如果是窗口发送的第一个数据包，则开启计时器</span><br>	&#125;		<br>	nextseqnum += <span class="hljs-number">1</span>;				<span class="hljs-comment">// nextseqnum加一</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>发送端接收报文线程函数</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">receive_thread</span><span class="hljs-params">(SOCKET *server, SOCKADDR_IN *server_addr)</span> </span>&#123;<br>	<span class="hljs-comment">// 开启非阻塞模式，既要接收数据，也要判断超时</span><br>	u_long mode = <span class="hljs-number">1</span>;<br>	<span class="hljs-built_in">ioctlsocket</span>(*server, FIONBIO, &amp;mode);<br>	<span class="hljs-type">char</span> *recv_buffer = <span class="hljs-keyword">new</span> <span class="hljs-type">char</span>[<span class="hljs-built_in">sizeof</span>(Header)];<br>	Header *header;<br>	SOCKADDR_IN ser_addr;<br>	<span class="hljs-type">int</span> ser_addr_len = <span class="hljs-built_in">sizeof</span>(SOCKADDR_IN);<br>	<span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>		<span class="hljs-keyword">if</span> (send_over) &#123;	<span class="hljs-comment">// 如果文件发送成功，结束线程</span><br>			mode = <span class="hljs-number">0</span>;<br>			<span class="hljs-built_in">ioctlsocket</span>(*server, FIONBIO, &amp;mode);<br>			<span class="hljs-keyword">delete</span> []recv_buffer;<br>			<span class="hljs-keyword">return</span>;<br>		&#125;<br>		<span class="hljs-keyword">while</span> (<span class="hljs-built_in">recvfrom</span>(*server, recv_buffer, <span class="hljs-built_in">sizeof</span>(Header), <span class="hljs-number">0</span>, (sockaddr*)&amp;ser_addr, &amp;ser_addr_len) &lt;= <span class="hljs-number">-1</span>) &#123;<br>			<span class="hljs-keyword">if</span> (send_over) &#123;<span class="hljs-comment">// 如果文件发送成功，结束线程</span><br>				mode = <span class="hljs-number">0</span>;<br>				<span class="hljs-built_in">ioctlsocket</span>(*server, FIONBIO, &amp;mode);<br>				<span class="hljs-keyword">delete</span> []recv_buffer;<br>				<span class="hljs-keyword">return</span>;<br>			&#125;<br>			<span class="hljs-keyword">if</span> (my_timer.<span class="hljs-built_in">time_out</span>()) &#123;<br>				<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> packet : gbn_buffer) &#123;	<span class="hljs-comment">// 如果计时器超时，则重传当前窗口中的所有未确认的报文</span><br>					<span class="hljs-built_in">sendto</span>(*server, (<span class="hljs-type">char</span>*)packet, <span class="hljs-built_in">sizeof</span>(Header) + packet-&gt;hdr.length, <span class="hljs-number">0</span>, (sockaddr*)server_addr, <span class="hljs-built_in">sizeof</span>(SOCKADDR_IN));<br>					print_lock.<span class="hljs-built_in">lock</span>();<br>					cout &lt;&lt; <span class="hljs-string">&quot;超时重传数据包，首部为: seq:&quot;</span> &lt;&lt; packet-&gt;hdr.seq &lt;&lt; <span class="hljs-string">&quot;, ack:&quot;</span> &lt;&lt; packet-&gt;hdr.ack &lt;&lt; <span class="hljs-string">&quot;, flag:&quot;</span> &lt;&lt; packet-&gt;hdr.flag &lt;&lt; <span class="hljs-string">&quot;, checksum:&quot;</span> &lt;&lt; packet-&gt;hdr.checksum &lt;&lt; <span class="hljs-string">&quot;, len:&quot;</span> &lt;&lt; packet-&gt;hdr.length &lt;&lt; endl;<br>					print_lock.<span class="hljs-built_in">unlock</span>();<br>				&#125;<br>				my_timer.<span class="hljs-built_in">start_timer</span>();<br>			&#125;<br>		&#125;<br>		header = (Header*)recv_buffer;<br>		<span class="hljs-type">int</span> chksum = <span class="hljs-built_in">checksum</span>(recv_buffer, <span class="hljs-built_in">sizeof</span>(Header));<br>		<span class="hljs-keyword">if</span> (chksum != <span class="hljs-number">0</span>) &#123;<br>			<span class="hljs-keyword">continue</span>;<br>		&#125;<br>		<span class="hljs-keyword">if</span> (header-&gt;flag == RST) &#123;<br>			cout &lt;&lt; <span class="hljs-string">&quot;连接异常，退出程序&quot;</span> &lt;&lt; endl;<br>			<span class="hljs-built_in">exit</span>(<span class="hljs-number">-1</span>);<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (header-&gt;flag == ACK) &#123;<br>			<span class="hljs-type">int</span> recv_num = header-&gt;ack + <span class="hljs-number">1</span> - base;<br>			<span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; recv_num; i++) &#123; <span class="hljs-comment">// 接收到一个ACK报文，且是一个新的ACK，则将ACK之前的缓冲区中的报文弹出</span><br>				buffer_lock.<span class="hljs-built_in">lock</span>();<br>				<span class="hljs-keyword">if</span> (gbn_buffer.<span class="hljs-built_in">size</span>() &lt;= <span class="hljs-number">0</span>) &#123;<br>					<span class="hljs-keyword">break</span>;<br>				&#125;<br>				<span class="hljs-keyword">delete</span> gbn_buffer[<span class="hljs-number">0</span>];<br>				gbn_buffer.<span class="hljs-built_in">erase</span>(gbn_buffer.<span class="hljs-built_in">begin</span>());<br>				buffer_lock.<span class="hljs-built_in">unlock</span>();<br>			&#125;<br>			base = header-&gt;ack + <span class="hljs-number">1</span>;<br>            print_lock.<span class="hljs-built_in">lock</span>();<br>			cout &lt;&lt; <span class="hljs-string">&quot;接收到来自服务器的数据包，首部为: seq:&quot;</span> &lt;&lt; header-&gt;seq &lt;&lt; <span class="hljs-string">&quot;, ack:&quot;</span> &lt;&lt; header-&gt;ack &lt;&lt; <span class="hljs-string">&quot;, flag:&quot;</span> &lt;&lt; header-&gt;flag &lt;&lt; <span class="hljs-string">&quot;, checksum:&quot;</span> &lt;&lt; header-&gt;checksum &lt;&lt; <span class="hljs-string">&quot;, len:&quot;</span> &lt;&lt; header-&gt;length &lt;&lt; <span class="hljs-string">&quot;, 剩余窗口大小:&quot;</span> &lt;&lt; WND - (nextseqnum - base) &lt;&lt; endl;<br>			print_lock.<span class="hljs-built_in">unlock</span>();<br>		&#125;<br>		<span class="hljs-keyword">if</span> (base != nextseqnum) &#123;<br>			my_timer.<span class="hljs-built_in">start_timer</span>();<br>		&#125;<br>		<span class="hljs-keyword">else</span> &#123; <span class="hljs-comment">// 窗口空了，关闭计时器</span><br>			my_timer.<span class="hljs-built_in">stop_timer</span>();<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="接收端接收数据"><a href="#接收端接收数据" class="headerlink" title="接收端接收数据"></a>接收端接收数据</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">recv_file</span><span class="hljs-params">(SOCKET *server, SOCKADDR_IN *server_addr, <span class="hljs-type">char</span> *data_buffer, <span class="hljs-type">int</span> *len)</span> </span>&#123;<br>	<span class="hljs-type">bool</span> file_finish = <span class="hljs-literal">false</span>;<br>	SOCKADDR_IN client_addr;<br>	<span class="hljs-type">int</span> client_addr_length = <span class="hljs-built_in">sizeof</span>(SOCKADDR_IN);<br>	Header header;<br>	<span class="hljs-comment">// 接收缓冲和发送缓冲</span><br>	<span class="hljs-type">char</span> *recv_buffer = <span class="hljs-keyword">new</span> <span class="hljs-type">char</span>[MSS + <span class="hljs-built_in">sizeof</span>(header)];<br>	<span class="hljs-type">char</span> *send_buffer = <span class="hljs-keyword">new</span> <span class="hljs-type">char</span>[<span class="hljs-built_in">sizeof</span>(header)];<br>	<span class="hljs-built_in">memset</span>(recv_buffer, <span class="hljs-number">0</span>, MSS + <span class="hljs-built_in">sizeof</span>(header));<br>	<span class="hljs-built_in">memset</span>(send_buffer, <span class="hljs-number">0</span>, <span class="hljs-built_in">sizeof</span>(header));<br>	<span class="hljs-comment">// 先初始化一下send_buffer</span><br>	((Header*)send_buffer)-&gt;<span class="hljs-built_in">set_args</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, ACK, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br>	((Header*)send_buffer)-&gt;checksum = <span class="hljs-built_in">checksum</span>(send_buffer, <span class="hljs-built_in">sizeof</span>(Header));<br>	<span class="hljs-comment">// 一直接收数据</span><br>	u_long mode = <span class="hljs-number">1</span>;<br>	<span class="hljs-built_in">ioctlsocket</span>(*server, FIONBIO, &amp;mode);<br>	<span class="hljs-type">clock_t</span> start;<br>	<span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>		<span class="hljs-type">int</span> result;<br>		<span class="hljs-keyword">while</span> ((result = <span class="hljs-built_in">recvfrom</span>(*server, recv_buffer, MSS + <span class="hljs-built_in">sizeof</span>(header), <span class="hljs-number">0</span>, (sockaddr*)&amp;client_addr, &amp;client_addr_length)) &lt;= <span class="hljs-number">0</span>) &#123;<br>			<span class="hljs-comment">// 长时间没有接收到信息，且文件传完了，认为对方嘎了</span><br>			<span class="hljs-keyword">if</span> (file_finish == <span class="hljs-literal">true</span> &amp;&amp; <span class="hljs-built_in">clock</span>() - start &gt; WAITTIME) &#123;<br>				cout &lt;&lt; <span class="hljs-string">&quot;长时间没有接收到报文，断开连接&quot;</span>;<br>				<span class="hljs-keyword">delete</span> []send_buffer;<br>				<span class="hljs-keyword">delete</span> []recv_buffer;<br>				mode = <span class="hljs-number">0</span>;<br>				<span class="hljs-built_in">ioctlsocket</span>(*server, FIONBIO, &amp;mode);<br>				<span class="hljs-keyword">return</span>;<br>			&#125;<br>		&#125;<br>		<span class="hljs-comment">// 得到数据头</span><br>		<span class="hljs-built_in">memcpy</span>(&amp;header, recv_buffer, <span class="hljs-built_in">sizeof</span>(header));<br>		cout &lt;&lt; <span class="hljs-string">&quot;接收到长度为&quot;</span> &lt;&lt; result &lt;&lt; <span class="hljs-string">&quot;字节的数据报,头部为: &quot;</span>;<br>		cout &lt;&lt; <span class="hljs-string">&quot;seq: &quot;</span> &lt;&lt; header.seq &lt;&lt; <span class="hljs-string">&quot; ack: &quot;</span> &lt;&lt; header.ack &lt;&lt; <span class="hljs-string">&quot; flag: &quot;</span> &lt;&lt; header.flag &lt;&lt; <span class="hljs-string">&quot; checksum: &quot;</span> &lt;&lt; header.checksum &lt;&lt; <span class="hljs-string">&quot; length: &quot;</span> &lt;&lt; header.length &lt;&lt; endl;<br>		<span class="hljs-comment">// 先计算一下校验和</span><br>		u_short chksum = <span class="hljs-built_in">checksum</span>(recv_buffer, result);<br>		<span class="hljs-comment">// 校验和不对</span><br>		<span class="hljs-keyword">if</span> (chksum != <span class="hljs-number">0</span>) &#123;<br>			<span class="hljs-type">int</span> n = <span class="hljs-built_in">sendto</span>(*server, send_buffer, <span class="hljs-built_in">sizeof</span>(Header), <span class="hljs-number">0</span>, (sockaddr*)&amp;client_addr, <span class="hljs-built_in">sizeof</span>(SOCKADDR_IN));<br>			cout &lt;&lt; <span class="hljs-string">&quot;数据报校验和出错&quot;</span> &lt;&lt; endl;<br>			<span class="hljs-keyword">continue</span>;<br>		&#125;<br>		<span class="hljs-keyword">if</span> (header.flag == FIN) &#123;<br>			Header reply_header;<br>			reply_header.<span class="hljs-built_in">set_args</span>(<span class="hljs-number">0</span>, (u_short)(header.seq + <span class="hljs-number">1</span>), ACK, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br>			<span class="hljs-built_in">memcpy</span>(send_buffer, (<span class="hljs-type">char</span>*)&amp;reply_header, <span class="hljs-built_in">sizeof</span>(reply_header));<br>			chksum = <span class="hljs-built_in">checksum</span>(send_buffer, <span class="hljs-built_in">sizeof</span>(reply_header));<br>			((Header*)send_buffer)-&gt;checksum = chksum;<br>			<span class="hljs-type">int</span> n = <span class="hljs-built_in">sendto</span>(*server, send_buffer, <span class="hljs-built_in">sizeof</span>(reply_header), <span class="hljs-number">0</span>, (sockaddr*)&amp;client_addr, <span class="hljs-built_in">sizeof</span>(SOCKADDR_IN));<br>			cout &lt;&lt; <span class="hljs-string">&quot;接收到FIN报文，发回ACK报文，传输结束&quot;</span> &lt;&lt; endl;<br>			<span class="hljs-keyword">break</span>;<br>		&#125;<br>		<span class="hljs-comment">// 接收到一个数据报文</span><br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (header.seq == expectedseqnum) &#123;<br>			<span class="hljs-comment">// 发回一个ack</span><br>			Header reply_header;<br>			reply_header.<span class="hljs-built_in">set_args</span>(<span class="hljs-number">0</span>, expectedseqnum, ACK, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br>			<span class="hljs-built_in">memcpy</span>(send_buffer, (<span class="hljs-type">char</span>*)&amp;reply_header, <span class="hljs-built_in">sizeof</span>(reply_header));<br>			chksum = <span class="hljs-built_in">checksum</span>(send_buffer, <span class="hljs-built_in">sizeof</span>(reply_header));<br>			((Header*)send_buffer)-&gt;checksum = chksum;<br>			<span class="hljs-type">int</span> n = <span class="hljs-built_in">sendto</span>(*server, send_buffer, <span class="hljs-built_in">sizeof</span>(reply_header), <span class="hljs-number">0</span>, (sockaddr*)&amp;client_addr, <span class="hljs-built_in">sizeof</span>(SOCKADDR_IN));<br>			cout &lt;&lt; <span class="hljs-string">&quot;发送ACK报文:&quot;</span> &lt;&lt; <span class="hljs-string">&quot;seq: &quot;</span> &lt;&lt; reply_header.seq &lt;&lt; <span class="hljs-string">&quot; ack: &quot;</span> &lt;&lt; reply_header.ack &lt;&lt; <span class="hljs-string">&quot; flag: &quot;</span> &lt;&lt; reply_header.flag &lt;&lt; <span class="hljs-string">&quot; checksum: &quot;</span> &lt;&lt; chksum &lt;&lt; <span class="hljs-string">&quot; length: &quot;</span> &lt;&lt; reply_header.length &lt;&lt; endl;<br>			expectedseqnum++;<br>			<span class="hljs-built_in">memcpy</span>(data_buffer + *len, recv_buffer + <span class="hljs-built_in">sizeof</span>(header), header.length);<br>			*len += header.length;<br>			cout &lt;&lt; <span class="hljs-string">&quot;数据报成功获取&quot;</span> &lt;&lt; endl;<br>			<span class="hljs-comment">// 最后一个报文到了</span><br>			<span class="hljs-keyword">if</span> (header.flag &amp; LAS) &#123;<br>				file_finish = <span class="hljs-literal">true</span>;<br>				start = <span class="hljs-built_in">clock</span>();<br>				cout &lt;&lt; <span class="hljs-string">&quot;文件接收完毕，等待客户端挥手&quot;</span> &lt;&lt; endl;<br>			&#125;<br>		&#125;<br>		<span class="hljs-keyword">else</span> &#123;<br>			<span class="hljs-type">int</span> n = <span class="hljs-built_in">sendto</span>(*server, send_buffer, <span class="hljs-built_in">sizeof</span>(Header), <span class="hljs-number">0</span>, (sockaddr*)&amp;client_addr, <span class="hljs-built_in">sizeof</span>(SOCKADDR_IN));<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">delete</span> []send_buffer;<br>	<span class="hljs-keyword">delete</span> []recv_buffer;<br>	mode = <span class="hljs-number">0</span>;<br>	<span class="hljs-built_in">ioctlsocket</span>(*server, FIONBIO, &amp;mode);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="实验结果展示"><a href="#实验结果展示" class="headerlink" title="实验结果展示"></a>实验结果展示</h2><p>握手与挥手和实验第一部分一致，在此略过。</p>
+<h3 id="数据传输"><a href="#数据传输" class="headerlink" title="数据传输"></a>数据传输</h3><ul>
+<li><p>开启路由程序<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021603441.jpg" srcset="/img/loading.gif" lazyload></p>
+</li>
+<li><p>数据传输<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021631765.jpg" srcset="/img/loading.gif" lazyload></p>
+</li>
+<li><p>超时重传<br>如下图所示，序列号为232的报文产生了丢失，发送端发生超时，将会重传当前窗口中所有已发送但未被确认的报文。<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021632873.png" srcset="/img/loading.gif" lazyload></p>
+</li>
+</ul>
+<h3 id="传输结果"><a href="#传输结果" class="headerlink" title="传输结果"></a>传输结果</h3><p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021611641.jpg" srcset="/img/loading.gif" lazyload></p>
+<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212021612400.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>如上图所示，传输结果与原图大小、信息完全相同，传输成功。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%AE%A1%E7%BD%91/">#计网</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>计网大作业二</div>
+      <div>http://example.com/2022/12/14/计网大作业二/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>yuwensq</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/12/14/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%B8%89/" title="计网大作业三">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">计网大作业三</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/13/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%B8%80/" title="计网大作业一">
+                        <span class="hidden-mobile">计网大作业一</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"maxyD2wC7xK4zL63tQzM6waA-MdYXbMMI","appKey":"go2gAUxZcapaCi3vX2ERfnxg","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
