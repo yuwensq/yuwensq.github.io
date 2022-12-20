@@ -214,7 +214,9 @@
     <url>/2022/12/15/%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96/</url>
     <content><![CDATA[<p><center>硬件预取</center><br><span id="more"></span></p>
 <h1 id="硬件预取"><a href="#硬件预取" class="headerlink" title="硬件预取"></a>硬件预取</h1><p>体系结构期末大作业要我们用ChampSim模拟器来实现L2Cache的预取和LLCache的替换算法。之前对于硬件的预取没有太多的了解。这段时间学习一下，记录一下学习收获啥的，有一部分摘自网络。</p>
-<p>下面给出具体参考的网站：<br><a href="https://zhuanlan.zhihu.com/p/491673969">https://zhuanlan.zhihu.com/p/491673969</a></p>
+<p>下面给出具体参考的网站以及参考文献：</p>
+<p><a href="https://zhuanlan.zhihu.com/p/491673969">https://zhuanlan.zhihu.com/p/491673969</a></p>
+<p>Nesbit, K. J., &amp; Smith, J. E. (2004, February). Data cache prefetching using a global history buffer.<br>In 10th International Symposium on High Performance Computer Architecture (HPCA’04) (pp. 96-96).<br>IEEE.</p>
 <h2 id="为啥要预取"><a href="#为啥要预取" class="headerlink" title="为啥要预取"></a>为啥要预取</h2><p>处理器和内存之间的性能差异越来越大导致的。两者发展的侧重点不同，CPU主要是要快，往更快执行任务发展；而内存的发展有些偏向于增加内存的密度，让内存变得更大。1985年至2010年间，CPU的性能提升的数千倍，可是内存相关的性能只提升了不到10倍。如果等CPU需要执行相关指令或者需要修改数据的时候再从内存中去读取，那么大部分时间都会花费在等待数据上，这是不可容忍的。这时预取的重要性就体现了，将将要访问的内容提前从内存搬移到Cache中，CPU就可以即时拿到所需的内容，避免了等待。当然，如果预取做得不好，是有可能导致性能下降的，由于Cache的大小是很宝贵的，如果预取判断出错，预取的是无用的数据，然后反而把Cache中后续有可能还会用到的数据给Evict了，那么会增加系统的功耗，减低性能。</p>
 <h2 id="硬件预取策略关注点"><a href="#硬件预取策略关注点" class="headerlink" title="硬件预取策略关注点"></a>硬件预取策略关注点</h2><h3 id="考虑点"><a href="#考虑点" class="headerlink" title="考虑点"></a>考虑点</h3><p>想要消除内存性能与CPU性能的巨大的gap，相关的预取策略必须考虑以下三点：</p>
 <ul>
