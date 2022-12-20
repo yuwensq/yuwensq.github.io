@@ -246,7 +246,14 @@
 <h4 id="Stride-Prefetching"><a href="#Stride-Prefetching" class="headerlink" title="Stride Prefetching"></a>Stride Prefetching</h4><p>传统的步幅预取使用一个表来存储关于单条load指令的与步幅相关的历史信息。因此，它使用load指令的PC值来索引历史表。每个表项记录对应的load指令的最近访存时发生缓存缺失的两个地址之间的<strong>步幅</strong>以及最近的一个发生缓存缺失的<strong>访存地址</strong>。当发生缓存缺失时，预取机制会使用当前的load指令的PC值来索引历史表，并将当前load指令的访存地址addr与表项中记录的最近一次的缓存缺失地址相减。得到的结果s如果与表项中记录的步幅一致，则这个时候预取器会感觉未来很有可能在$addr+d*s$的地址处也发生缓存缺失，此时，它便会向更低一级的cache发出预取请求，请求的地址就是$addr+s$、$addr+2s$……、$addr+ds$，其中，d就叫做预取度。</p>
 <h4 id="Correlation-Prefetching"><a href="#Correlation-Prefetching" class="headerlink" title="Correlation Prefetching"></a>Correlation Prefetching</h4><p>比起步幅预取来说，关联预取可以处理更加复杂的地址访问模式。马尔可夫预取(Markov Prefetch)是一个使用历史表的关联预取算法。其中，预取键是导致缓存缺失的访问地址。历史表中的每个表项存储了历史中紧跟在对应预取键后的导致缓存缺失的访问地址的链表。当再次发生缓存缺失时，预取算法根据访存地址来索引历史表，然后从表项的链表中找出若干个置信度比较高的地址给预取了。(这里置信度高指的是未来更加有可能导致缓存缺失，比如我们可以预取发生缓存缺失时间上离预取键最近的那个访存地址)</p>
 <p>马尔可夫预取还有一个推广，叫做距离预取(Distance Prefetch)。从上边的描述我们不难发现，马尔可夫预取与导致缓存缺失的地址的具体值有较大的联系(后者是前者历史表的索引)。距离预取则是弱化了这种联系，其使用地址增量(address delta)————两个连续导致缓存缺失的访存地址之间的距离作为历史表的预取键。每个历史表条目都包含一个增量列表，这些增量在过去出现在预取键对应的增量之后。当发生缓存缺失时，预取算法将当前地址加上查表得到的增量后的地址预取到缓存中。</p>
-<h3 id="GHB预取机制"><a href="#GHB预取机制" class="headerlink" title="GHB预取机制"></a>GHB预取机制</h3><p>传统的表预取有一些缺点，比如容易有过时的数据；预取键容易造成冲突；每个表项能存储的历史信息较少等不足。</p>
+<h3 id="GHB预取机制"><a href="#GHB预取机制" class="headerlink" title="GHB预取机制"></a>GHB预取机制</h3><p>传统的表预取有一些缺点，比如容易有过时的数据；预取键容易造成冲突；每个表项能存储的历史信息较少等不足。然后就有人发明出了基于GHB的预取机制，将预取键的匹配和历史信息的存储给解耦了。</p>
+<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212202150882.jpg" alt=""></p>
+<p>GHB预取机制的结构如上图所示，主要有两级组成：</p>
+<ul>
+<li>Index table. 索引表，这个表主要用于根据预取键来索引GHB缓冲区中的具体条目。这里预取键可以是PC，也可以是访存地址。</li>
+<li>Global history buffer. 全局历史缓冲区，是一个循环队列。一共能存n项，其中每项存储一个地址以及一个指针。通过指针按时间顺序将一个预取键对应的地址给链起来。</li>
+</ul>
+<p>使用GHB也可以实现传统的步幅预取、马尔可夫预取、距离预取机制。(明天再写)。</p>
 ]]></content>
       <tags>
         <tag>体系结构</tag>
