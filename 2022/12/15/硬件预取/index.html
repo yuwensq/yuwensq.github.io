@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142248807.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212201728018.jpg">
 <meta property="article:published_time" content="2022-12-15T08:27:19.000Z">
-<meta property="article:modified_time" content="2022-12-20T09:52:20.615Z">
+<meta property="article:modified_time" content="2022-12-20T10:06:10.939Z">
 <meta property="article:author" content="yuwensq">
 <meta property="article:tag" content="体系结构">
 <meta name="twitter:card" content="summary">
@@ -233,7 +233,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-20 17:52:20" itemprop="dateModified" datetime="2022-12-20T17:52:20+08:00">2022-12-20</time>
+                <time title="修改时间：2022-12-20 18:06:10" itemprop="dateModified" datetime="2022-12-20T18:06:10+08:00">2022-12-20</time>
               </span>
 
           
@@ -249,7 +249,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.5k</span>
+              <span>2.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -268,12 +268,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <center>硬件预取</center>
-<span id="more"></span>
-
+        <p><center>硬件预取</center><br><span id="more"></span></p>
 <h1 id="硬件预取"><a href="#硬件预取" class="headerlink" title="硬件预取"></a>硬件预取</h1><p>体系结构期末大作业要我们用ChampSim模拟器来实现L2Cache的预取和LLCache的替换算法。之前对于硬件的预取没有太多的了解。这段时间学习一下，记录一下学习收获啥的，有一部分摘自网络。</p>
 <p>下面给出具体参考的网站：<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/491673969">https://zhuanlan.zhihu.com/p/491673969</a></p>
-<h2 id="为啥要预取"><a href="#为啥要预取" class="headerlink" title="为啥要预取"></a>为啥要预取</h2><p>处理器和内存之前的性能差异越来越大导致的。1985年至2010年间，CPU的性能提升的数千倍，可是内存相关的性能只提升了不到10倍。如果等CPU需要执行相关指令或者需要修改数据的时候再从内存中去读取，那么大部分时间都会花费在等待数据上，这是不可容忍的。这时预取的重要性就体现了，将将要访问的内容提前从内存搬移到Cache中，CPU就可以即时拿到所需的内容，避免了等待。当然，如果预取做得不好，是有可能导致性能下降的，由于Cache的大小是很宝贵的，如果预取判断出错，预取的是无用的数据，然后反而把Cache中后续有可能还会用到的数据给Evict了，那么会增加系统的功耗，减低性能。</p>
+<h2 id="为啥要预取"><a href="#为啥要预取" class="headerlink" title="为啥要预取"></a>为啥要预取</h2><p>处理器和内存之间的性能差异越来越大导致的。两者发展的侧重点不同，CPU主要是要快，往更快执行任务发展；而内存的发展有些偏向于增加内存的密度，让内存变得更大。1985年至2010年间，CPU的性能提升的数千倍，可是内存相关的性能只提升了不到10倍。如果等CPU需要执行相关指令或者需要修改数据的时候再从内存中去读取，那么大部分时间都会花费在等待数据上，这是不可容忍的。这时预取的重要性就体现了，将将要访问的内容提前从内存搬移到Cache中，CPU就可以即时拿到所需的内容，避免了等待。当然，如果预取做得不好，是有可能导致性能下降的，由于Cache的大小是很宝贵的，如果预取判断出错，预取的是无用的数据，然后反而把Cache中后续有可能还会用到的数据给Evict了，那么会增加系统的功耗，减低性能。</p>
 <h2 id="硬件预取策略关注点"><a href="#硬件预取策略关注点" class="headerlink" title="硬件预取策略关注点"></a>硬件预取策略关注点</h2><h3 id="考虑点"><a href="#考虑点" class="headerlink" title="考虑点"></a>考虑点</h3><p>想要消除内存性能与CPU性能的巨大的gap，相关的预取策略必须考虑以下三点：</p>
 <ul>
 <li>预取哪块数据：必须能准确地判断所需预取的数据，这个很好理解，无效数据对我们毫无用处，只会白白耗费电源，还有可能将缓存中有用的数据给踢出，从而导致性能下降。</li>
@@ -282,8 +280,8 @@
 </ul>
 <h3 id="两个关键指标"><a href="#两个关键指标" class="headerlink" title="两个关键指标"></a>两个关键指标</h3><p>在评价一个预取策略的好坏时，我们一般会从覆盖率和准确性两个维度来评判，好的预取策略必须同时在这两个指标上面有亮眼的成绩。</p>
 <ul>
-<li>覆盖率很好理解，覆盖率就是引入预取策略消除的Cache Miss次数与引入预取策略前的总的Cache Miss次数的比值。比如没有预取机制的时候会发生100次Cache Miss，然后引入预取将Cache Miss减少到了30次，意味着该预取策略成功避免了70次Cache Miss，即覆盖率为70&#x2F;100&#x3D;70%。<img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142131261.jpg"></li>
-<li>预取的正确率还需要考虑在这个过程中预取机制发出了几次预取操作，接着上面的例子，如果该预取机制总共发出了140次的预取操作，其中70次是有效的预取操作，那么正确率为70&#x2F;140&#x3D;50%。<img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142131110.jpg"></li>
+<li>覆盖率很好理解，覆盖率就是引入预取策略消除的Cache Miss次数与引入预取策略前的总的Cache Miss次数的比值。比如没有预取机制的时候会发生100次Cache Miss，然后引入预取将Cache Miss减少到了30次，意味着该预取策略成功避免了70次Cache Miss，即覆盖率为70/100=70%。<img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142131261.jpg" alt=""></li>
+<li>预取的正确率还需要考虑在这个过程中预取机制发出了几次预取操作，接着上面的例子，如果该预取机制总共发出了140次的预取操作，其中70次是有效的预取操作，那么正确率为70/140=50%。<img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142131110.jpg" alt=""></li>
 </ul>
 <p>显然，覆盖率和准确性也是相互制约的。覆盖率的提高倾向于有更多的预取次数，而准确性的保证的限制了预取次数不能太高。我们应该在追求覆盖率的同时，尽量保证准确性。</p>
 <h3 id="及时性"><a href="#及时性" class="headerlink" title="及时性"></a>及时性</h3><p>预取的及时性也是很需要考虑的一个指标。假设我们正确的判断出了要预取的数据，但是如果预取的时机不合适，也有可能适得其反。如果过早预取，则预取到的数据有可能在需要之前就被踢出缓存，还有可能占用缓存空间，造成Cache Miss的增加；如果过晚预取，则可能会造成较大的延时，CPU需要等待预取后才能继续执行。</p>
@@ -291,16 +289,16 @@
 <h3 id="指令预取"><a href="#指令预取" class="headerlink" title="指令预取"></a>指令预取</h3><p>程序执行中，指令往往顺序执行，虽然有跳转等等一些指令，但是指令的访问模式相对来说还是比较好预测的。</p>
 <h3 id="数据预取"><a href="#数据预取" class="headerlink" title="数据预取"></a>数据预取</h3><p>相对来说，数据预取更加难以预测，因为程序对于数据的访问模式完全可以是随机的。因此，数据预取比较难做，也更加的有意思。</p>
 <h2 id="指令预取机制"><a href="#指令预取机制" class="headerlink" title="指令预取机制"></a>指令预取机制</h2><h3 id="next-line-prefetcher"><a href="#next-line-prefetcher" class="headerlink" title="next-line prefetcher"></a>next-line prefetcher</h3><p>最简单的指令预取机制，维护了一个叫stream buffer的预取buffer，每次CPU请求一个缓存行时，会从下一级Cache中将下一个缓存行读取到stream buffer中。只在指令顺序执行的时候表现比较好，当遇到分支或者函数调用时，预测效果可能会较差。</p>
-<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142157923.jpg"></p>
+<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142157923.jpg" alt=""></p>
 <h3 id="FDIP-Fetch-directed-instruction-prefetching-prefetcher"><a href="#FDIP-Fetch-directed-instruction-prefetching-prefetcher" class="headerlink" title="FDIP(Fetch-directed instruction prefetching) prefetcher"></a>FDIP(Fetch-directed instruction prefetching) prefetcher</h3><p>这种预取机制针对分支指令进行了处理，大概思路就是预取指令分支预测的结果。该机制在分支预测模块和取指模块之间插入了一个FTQ的模块，然后会经过一个filter把一部分地址过滤掉（比如已经存在ICache中的地址），然后进入到PIQ中，这时就会将PIQ中的地址发往下一级Cache，然后将取回的Cache Line放入一个全相联的Cache中。思考这种机制，它在分支预测之后预取，如果处理不好，感觉预取的速度跟不上取指的速度，就会带来一定的延迟。</p>
-<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142236486.jpg"></p>
+<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142236486.jpg" alt=""></p>
 <h3 id="discontinuity"><a href="#discontinuity" class="headerlink" title="discontinuity"></a>discontinuity</h3><p>不连续预取机制，我理解的是，这种机制就是把每次分支指令跳转的目标给记录一下，记录到一张表中。当下次再次访问到该分支指令时，在取指阶段查表，然后预取相应的缓存行就行，到分支目标指令取值时，指令已经被预取到缓存中。</p>
-<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142248807.jpg"></p>
+<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142248807.jpg" alt=""></p>
 <p>还有好多不同的指令预取机制，一口气也看不完，之后慢慢再学吧。</p>
-<h2 id="数据预取机制"><a href="#数据预取机制" class="headerlink" title="数据预取机制"></a>数据预取机制</h2><h3 id="传统基于表的预取"><a href="#传统基于表的预取" class="headerlink" title="传统基于表的预取"></a>传统基于表的预取</h3><p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212201728018.jpg"></p>
+<h2 id="数据预取机制"><a href="#数据预取机制" class="headerlink" title="数据预取机制"></a>数据预取机制</h2><h3 id="传统基于表的预取"><a href="#传统基于表的预取" class="headerlink" title="传统基于表的预取"></a>传统基于表的预取</h3><p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212201728018.jpg" alt=""></p>
 <p>如上图所示，传统的基于表的预取机制通常使用一个表来记录历史信息，并根据表中记录的信息来指导预取的进行。表由键来索引，键常常是PC值或者访问数据的地址。这种预取机制分为两种方式，步幅预取(stride prefetching)和关联预取(correlation prefetching)。(不知道翻译的对不对，很好理解，步幅预取是根据访问历史记录的地址间的步长信息来进行预取，而关联预取则是根据不同地址之间出现的相关性来进行预取)</p>
 <h4 id="Stride-Prefetching"><a href="#Stride-Prefetching" class="headerlink" title="Stride Prefetching"></a>Stride Prefetching</h4><p>传统的步幅预取使用一个表来存储关于单条load指令的与步幅相关的历史信息。因此，它使用load指令的PC值来索引历史表。每个表项记录对应的load指令的最近访存时发生缓存缺失的两个地址之间的<strong>步幅</strong>以及最近的一个发生缓存缺失的<strong>访存地址</strong>。当发生缓存缺失时，预取机制会使用当前的load指令的PC值来索引历史表，并将当前load指令的访存地址addr与表项中记录的最近一次的缓存缺失地址相减。得到的结果s如果与表项中记录的步幅一致，则这个时候预取器会感觉未来很有可能在$addr+d*s$的地址处也发生缓存缺失，此时，它便会向更低一级的cache发出预取请求，请求的地址就是$addr+s$、$addr+2s$……、$addr+ds$，其中，d就叫做预取度。</p>
-
+<h4 id="Correlation-Prefetching"><a href="#Correlation-Prefetching" class="headerlink" title="Correlation Prefetching"></a>Correlation Prefetching</h4>
     </div>
 
     
@@ -381,7 +379,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96"><span class="nav-number">1.</span> <span class="nav-text">硬件预取</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E5%95%A5%E8%A6%81%E9%A2%84%E5%8F%96"><span class="nav-number">1.1.</span> <span class="nav-text">为啥要预取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96%E7%AD%96%E7%95%A5%E5%85%B3%E6%B3%A8%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">硬件预取策略关注点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%83%E8%99%91%E7%82%B9"><span class="nav-number">1.2.1.</span> <span class="nav-text">考虑点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%85%B3%E9%94%AE%E6%8C%87%E6%A0%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">两个关键指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8A%E6%97%B6%E6%80%A7"><span class="nav-number">1.2.3.</span> <span class="nav-text">及时性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96%E5%88%86%E7%B1%BB"><span class="nav-number">1.3.</span> <span class="nav-text">硬件预取分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%A2%84%E5%8F%96"><span class="nav-number">1.3.1.</span> <span class="nav-text">指令预取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%8F%96"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据预取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%A2%84%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.4.</span> <span class="nav-text">指令预取机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#next-line-prefetcher"><span class="nav-number">1.4.1.</span> <span class="nav-text">next-line prefetcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FDIP-Fetch-directed-instruction-prefetching-prefetcher"><span class="nav-number">1.4.2.</span> <span class="nav-text">FDIP(Fetch-directed instruction prefetching) prefetcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#discontinuity"><span class="nav-number">1.4.3.</span> <span class="nav-text">discontinuity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.5.</span> <span class="nav-text">数据预取机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E5%9F%BA%E4%BA%8E%E8%A1%A8%E7%9A%84%E9%A2%84%E5%8F%96"><span class="nav-number">1.5.1.</span> <span class="nav-text">传统基于表的预取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Stride-Prefetching"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">Stride Prefetching</span></a></li></ol></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96"><span class="nav-number">1.</span> <span class="nav-text">硬件预取</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E5%95%A5%E8%A6%81%E9%A2%84%E5%8F%96"><span class="nav-number">1.1.</span> <span class="nav-text">为啥要预取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96%E7%AD%96%E7%95%A5%E5%85%B3%E6%B3%A8%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">硬件预取策略关注点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%83%E8%99%91%E7%82%B9"><span class="nav-number">1.2.1.</span> <span class="nav-text">考虑点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%85%B3%E9%94%AE%E6%8C%87%E6%A0%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">两个关键指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8A%E6%97%B6%E6%80%A7"><span class="nav-number">1.2.3.</span> <span class="nav-text">及时性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96%E5%88%86%E7%B1%BB"><span class="nav-number">1.3.</span> <span class="nav-text">硬件预取分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%A2%84%E5%8F%96"><span class="nav-number">1.3.1.</span> <span class="nav-text">指令预取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%8F%96"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据预取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%A2%84%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.4.</span> <span class="nav-text">指令预取机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#next-line-prefetcher"><span class="nav-number">1.4.1.</span> <span class="nav-text">next-line prefetcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FDIP-Fetch-directed-instruction-prefetching-prefetcher"><span class="nav-number">1.4.2.</span> <span class="nav-text">FDIP(Fetch-directed instruction prefetching) prefetcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#discontinuity"><span class="nav-number">1.4.3.</span> <span class="nav-text">discontinuity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.5.</span> <span class="nav-text">数据预取机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E5%9F%BA%E4%BA%8E%E8%A1%A8%E7%9A%84%E9%A2%84%E5%8F%96"><span class="nav-number">1.5.1.</span> <span class="nav-text">传统基于表的预取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Stride-Prefetching"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">Stride Prefetching</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Correlation-Prefetching"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">Correlation Prefetching</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -527,6 +525,61 @@
 
 
   
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
