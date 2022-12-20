@@ -72,7 +72,10 @@
 <h3 id="discontinuity"><a href="#discontinuity" class="headerlink" title="discontinuity"></a>discontinuity</h3><p>不连续预取机制，我理解的是，这种机制就是把每次分支指令跳转的目标给记录一下，记录到一张表中。当下次再次访问到该分支指令时，在取指阶段查表，然后预取相应的缓存行就行，到分支目标指令取值时，指令已经被预取到缓存中。</p>
 <p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142248807.jpg"></p>
 <p>还有好多不同的指令预取机制，一口气也看不完，之后慢慢再学吧。</p>
-<h2 id="数据预取机制"><a href="#数据预取机制" class="headerlink" title="数据预取机制"></a>数据预取机制</h2>]]></content>
+<h2 id="数据预取机制"><a href="#数据预取机制" class="headerlink" title="数据预取机制"></a>数据预取机制</h2><h3 id="传统基于表的预取"><a href="#传统基于表的预取" class="headerlink" title="传统基于表的预取"></a>传统基于表的预取</h3><p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212201728018.jpg"></p>
+<p>如上图所示，传统的基于表的预取机制通常使用一个表来记录历史信息，并根据表中记录的信息来指导预取的进行。表由键来索引，键常常是PC值或者访问数据的地址。这种预取机制分为两种方式，步幅预取(stride prefetching)和关联预取(correlation prefetching)。(不知道翻译的对不对，很好理解，步幅预取是根据访问历史记录的地址间的步长信息来进行预取，而关联预取则是根据不同地址之间出现的相关性来进行预取)</p>
+<h4 id="Stride-Prefetching"><a href="#Stride-Prefetching" class="headerlink" title="Stride Prefetching"></a>Stride Prefetching</h4><p>传统的步幅预取使用一个表来存储关于单条load指令的与步幅相关的历史信息。因此，它使用load指令的PC值来索引历史表。每个表项记录对应的load指令的最近访存时发生缓存缺失的两个地址之间的<strong>步幅</strong>以及最近的一个发生缓存缺失的<strong>访存地址</strong>。当发生缓存缺失时，预取机制会使用当前的load指令的PC值来索引历史表，并将当前load指令的访存地址addr与表项中记录的最近一次的缓存缺失地址相减。得到的结果s如果与表项中记录的步幅一致，则这个时候预取器会感觉未来很有可能在$addr+d*s$的地址处也发生缓存缺失，此时，它便会向更低一级的cache发出预取请求，请求的地址就是$addr+s$、$addr+2s$……、$addr+ds$，其中，d就叫做预取度。</p>
+]]></content>
       <tags>
         <tag>体系结构</tag>
       </tags>
