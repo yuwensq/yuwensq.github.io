@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212201728018.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212202150882.jpg">
 <meta property="article:published_time" content="2022-12-15T08:27:19.000Z">
-<meta property="article:modified_time" content="2022-12-20T14:06:53.216Z">
+<meta property="article:modified_time" content="2022-12-21T08:08:29.397Z">
 <meta property="article:author" content="yuwensq">
 <meta property="article:tag" content="体系结构">
 <meta name="twitter:card" content="summary">
@@ -234,7 +234,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-20 22:06:53" itemprop="dateModified" datetime="2022-12-20T22:06:53+08:00">2022-12-20</time>
+                <time title="修改时间：2022-12-21 16:08:29" itemprop="dateModified" datetime="2022-12-21T16:08:29+08:00">2022-12-21</time>
               </span>
 
           
@@ -250,14 +250,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.6k</span>
+              <span>3.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -310,7 +310,9 @@
 <li>Index table. 索引表，这个表主要用于根据预取键来索引GHB缓冲区中的具体条目。这里预取键可以是PC，也可以是访存地址。</li>
 <li>Global history buffer. 全局历史缓冲区，是一个循环队列。一共能存n项，其中每项存储一个地址以及一个指针。通过指针按时间顺序将一个预取键对应的地址给链起来。</li>
 </ul>
-<p>使用GHB也可以实现传统的步幅预取、马尔可夫预取、距离预取机制。(明天再写)。</p>
+<p>使用GHB也可以实现传统的步幅预取、马尔可夫预取、距离预取机制。</p>
+<h4 id="GHB步幅预取"><a href="#GHB步幅预取" class="headerlink" title="GHB步幅预取"></a>GHB步幅预取</h4><p>类似于传统的基于表的步幅预取，基于GHB的步幅预取的预取键也是load指令的PC值。预取器通过预取键来索引GHB中的条目，这里我们使每个预取键对应的GHB中的条目为预取键对应的load指令的访存地址。上边说过，这些地址形成了一个链，我们只需要取出链上的最后三个地址，计算出来对应的两个步幅，如果两个步幅相等，就可以像步幅预取那样预取新的缓存行了。</p>
+<h4 id="GHB关联预取"><a href="#GHB关联预取" class="headerlink" title="GHB关联预取"></a>GHB关联预取</h4><p>GHB关联预取也是类似的，它的预取键是实际的访存地址。预取键对应的GHB中的条目中存储了与预取键相同的地址。这样，当发生缓存缺失时，预取器根据缺失地址索引索引表，得到指向GHB条目的指针，然后访问得到的GHB条目链，链上每个元素在GHB中的直接后继元素即是预取候选。</p>
 
     </div>
 
@@ -392,7 +394,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96"><span class="nav-number">1.</span> <span class="nav-text">硬件预取</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E5%95%A5%E8%A6%81%E9%A2%84%E5%8F%96"><span class="nav-number">1.1.</span> <span class="nav-text">为啥要预取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96%E7%AD%96%E7%95%A5%E5%85%B3%E6%B3%A8%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">硬件预取策略关注点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%83%E8%99%91%E7%82%B9"><span class="nav-number">1.2.1.</span> <span class="nav-text">考虑点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%85%B3%E9%94%AE%E6%8C%87%E6%A0%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">两个关键指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8A%E6%97%B6%E6%80%A7"><span class="nav-number">1.2.3.</span> <span class="nav-text">及时性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96%E5%88%86%E7%B1%BB"><span class="nav-number">1.3.</span> <span class="nav-text">硬件预取分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%A2%84%E5%8F%96"><span class="nav-number">1.3.1.</span> <span class="nav-text">指令预取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%8F%96"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据预取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%A2%84%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.4.</span> <span class="nav-text">指令预取机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#next-line-prefetcher"><span class="nav-number">1.4.1.</span> <span class="nav-text">next-line prefetcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FDIP-Fetch-directed-instruction-prefetching-prefetcher"><span class="nav-number">1.4.2.</span> <span class="nav-text">FDIP(Fetch-directed instruction prefetching) prefetcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#discontinuity"><span class="nav-number">1.4.3.</span> <span class="nav-text">discontinuity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.5.</span> <span class="nav-text">数据预取机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E5%9F%BA%E4%BA%8E%E8%A1%A8%E7%9A%84%E9%A2%84%E5%8F%96"><span class="nav-number">1.5.1.</span> <span class="nav-text">传统基于表的预取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Stride-Prefetching"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">Stride Prefetching</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Correlation-Prefetching"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">Correlation Prefetching</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GHB%E9%A2%84%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text">GHB预取机制</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96"><span class="nav-number">1.</span> <span class="nav-text">硬件预取</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E5%95%A5%E8%A6%81%E9%A2%84%E5%8F%96"><span class="nav-number">1.1.</span> <span class="nav-text">为啥要预取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96%E7%AD%96%E7%95%A5%E5%85%B3%E6%B3%A8%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">硬件预取策略关注点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%83%E8%99%91%E7%82%B9"><span class="nav-number">1.2.1.</span> <span class="nav-text">考虑点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%85%B3%E9%94%AE%E6%8C%87%E6%A0%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">两个关键指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8A%E6%97%B6%E6%80%A7"><span class="nav-number">1.2.3.</span> <span class="nav-text">及时性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96%E5%88%86%E7%B1%BB"><span class="nav-number">1.3.</span> <span class="nav-text">硬件预取分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%A2%84%E5%8F%96"><span class="nav-number">1.3.1.</span> <span class="nav-text">指令预取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%8F%96"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据预取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%A2%84%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.4.</span> <span class="nav-text">指令预取机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#next-line-prefetcher"><span class="nav-number">1.4.1.</span> <span class="nav-text">next-line prefetcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FDIP-Fetch-directed-instruction-prefetching-prefetcher"><span class="nav-number">1.4.2.</span> <span class="nav-text">FDIP(Fetch-directed instruction prefetching) prefetcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#discontinuity"><span class="nav-number">1.4.3.</span> <span class="nav-text">discontinuity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.5.</span> <span class="nav-text">数据预取机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E5%9F%BA%E4%BA%8E%E8%A1%A8%E7%9A%84%E9%A2%84%E5%8F%96"><span class="nav-number">1.5.1.</span> <span class="nav-text">传统基于表的预取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Stride-Prefetching"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">Stride Prefetching</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Correlation-Prefetching"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">Correlation Prefetching</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GHB%E9%A2%84%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text">GHB预取机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GHB%E6%AD%A5%E5%B9%85%E9%A2%84%E5%8F%96"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">GHB步幅预取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GHB%E5%85%B3%E8%81%94%E9%A2%84%E5%8F%96"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">GHB关联预取</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
