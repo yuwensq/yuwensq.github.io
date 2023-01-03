@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Binのblog</title>
+    <link>http://yuwensq.github.io/</link>
+    
+    <image>
+      <url>http://yuwensq.github.io/icon.png</url>
+      <title>Binのblog</title>
+      <link>http://yuwensq.github.io/</link>
+    </image>
+    
+    <atom:link href="/rss2.xml" rel="self" type="application/rss+xml"/>
+    
+    <description>Coding For Fun</description>
+    <pubDate>Wed, 21 Dec 2022 08:08:29 GMT</pubDate>
+    <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>硬件预取</title>
+      <link>http://yuwensq.github.io/2022/12/15/%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96/</link>
+      <guid>http://yuwensq.github.io/2022/12/15/%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96/</guid>
+      <pubDate>Thu, 15 Dec 2022 08:27:19 GMT</pubDate>
+      <description>
+      
+        &lt;p&gt;&lt;center&gt;硬件预取&lt;/center&gt;&lt;br&gt;
+      
+      </description>
+      
+      
+      <comments>http://yuwensq.github.io/2022/12/15/%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96/#disqus_thread</comments>
+    </item>
+    
+    <item>
+      <title>大端模式和小端模式的差异和优缺点</title>
+      <link>http://yuwensq.github.io/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/</link>
+      <guid>http://yuwensq.github.io/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/</guid>
+      <pubDate>Thu, 15 Dec 2022 04:19:18 GMT</pubDate>
+      <description>
+      
+        &lt;h1 id=&quot;大端和小端的差异和优缺点&quot;&gt;&lt;a href=&quot;#大端和小端的差异和优缺点&quot; class=&quot;headerlink&quot; title=&quot;大端和小端的差异和优缺点&quot;&gt;&lt;/a&gt;大端和小端的差异和优缺点&lt;/h1&gt;
+      
+      </description>
+      
+      
+      <comments>http://yuwensq.github.io/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/#disqus_thread</comments>
+    </item>
+    
+    <item>
+      <title>VSCODE比较代码差异</title>
+      <link>http://yuwensq.github.io/2022/12/15/VSCODE%E6%AF%94%E8%BE%83%E4%BB%A3%E7%A0%81%E5%B7%AE%E5%BC%82/</link>
+      <guid>http://yuwensq.github.io/2022/12/15/VSCODE%E6%AF%94%E8%BE%83%E4%BB%A3%E7%A0%81%E5%B7%AE%E5%BC%82/</guid>
+      <pubDate>Thu, 15 Dec 2022 04:17:12 GMT</pubDate>
+      <description>
+      
+        &lt;h1 id=&quot;VSCODE比较代码差异&quot;&gt;&lt;a href=&quot;#VSCODE比较代码差异&quot; class=&quot;headerlink&quot; title=&quot;VSCODE比较代码差异&quot;&gt;&lt;/a&gt;VSCODE比较代码差异&lt;/h1&gt;
+      
+      </description>
+      
+      
+      <comments>http://yuwensq.github.io/2022/12/15/VSCODE%E6%AF%94%E8%BE%83%E4%BB%A3%E7%A0%81%E5%B7%AE%E5%BC%82/#disqus_thread</comments>
+    </item>
+    
+    <item>
+      <title>计网大作业三</title>
+      <link>http://yuwensq.github.io/2022/12/14/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%B8%89/</link>
+      <guid>http://yuwensq.github.io/2022/12/14/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%B8%89/</guid>
+      <pubDate>Wed, 14 Dec 2022 08:20:09 GMT</pubDate>
+      <description>
+      
+        &lt;h1 id=&quot;计算机网络大作业第三部分&quot;&gt;&lt;a href=&quot;#计算机网络大作业第三部分&quot; class=&quot;headerlink&quot; title=&quot;计算机网络大作业第三部分&quot;&gt;&lt;/a&gt;计算机网络大作业第三部分&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;徐文斌 计算机科学与技术 2010234&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;实验要求&quot;&gt;&lt;a href=&quot;#实验要求&quot; class=&quot;headerlink&quot; title=&quot;实验要求&quot;&gt;&lt;/a&gt;实验要求&lt;/h2&gt;&lt;p&gt;在实验3-2的基础上，选择实现一种拥塞控制算法，也可以是改进的算法，完成给定测试文件的传输。&lt;/p&gt;
+      
+      </description>
+      
+      
+      <comments>http://yuwensq.github.io/2022/12/14/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%B8%89/#disqus_thread</comments>
+    </item>
+    
+    <item>
+      <title>计网大作业二</title>
+      <link>http://yuwensq.github.io/2022/12/14/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%BA%8C/</link>
+      <guid>http://yuwensq.github.io/2022/12/14/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%BA%8C/</guid>
+      <pubDate>Wed, 14 Dec 2022 08:18:06 GMT</pubDate>
+      <description>
+      
+        &lt;h1 id=&quot;计算机网络大作业第二部分&quot;&gt;&lt;a href=&quot;#计算机网络大作业第二部分&quot; class=&quot;headerlink&quot; title=&quot;计算机网络大作业第二部分&quot;&gt;&lt;/a&gt;计算机网络大作业第二部分&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;徐文斌 计算机科学与技术 2010234&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;实验要求&quot;&gt;&lt;a href=&quot;#实验要求&quot; class=&quot;headerlink&quot; title=&quot;实验要求&quot;&gt;&lt;/a&gt;实验要求&lt;/h2&gt;&lt;p&gt;在实验3-1的基础上，将停等机制改成基于滑动窗口的流量控制机制，采用固定窗口大小，支持累积确认，完成给定测试文件的传输。&lt;/p&gt;
+      
+      </description>
+      
+      
+      <comments>http://yuwensq.github.io/2022/12/14/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%BA%8C/#disqus_thread</comments>
+    </item>
+    
+    <item>
+      <title>计网大作业一</title>
+      <link>http://yuwensq.github.io/2022/12/13/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%B8%80/</link>
+      <guid>http://yuwensq.github.io/2022/12/13/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%B8%80/</guid>
+      <pubDate>Tue, 13 Dec 2022 15:25:29 GMT</pubDate>
+      <description>
+      
+        &lt;h1 id=&quot;计算机网络大作业第一部分&quot;&gt;&lt;a href=&quot;#计算机网络大作业第一部分&quot; class=&quot;headerlink&quot; title=&quot;计算机网络大作业第一部分&quot;&gt;&lt;/a&gt;计算机网络大作业第一部分&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;徐文斌 计算机科学与技术 2010234&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;实验要求&quot;&gt;&lt;a href=&quot;#实验要求&quot; class=&quot;headerlink&quot; title=&quot;实验要求&quot;&gt;&lt;/a&gt;实验要求&lt;/h2&gt;&lt;p&gt;利用数据报套接字在用户空间实现面向连接的可靠数据传输，功能包括：建立连接、差错检测、确认重传等。流量控制采用停等机制，完成给定测试文件的传输。&lt;/p&gt;
+      
+      </description>
+      
+      
+      <comments>http://yuwensq.github.io/2022/12/13/%E8%AE%A1%E7%BD%91%E5%A4%A7%E4%BD%9C%E4%B8%9A%E4%B8%80/#disqus_thread</comments>
+    </item>
+    
+    <item>
+      <title>Hello World</title>
+      <link>http://yuwensq.github.io/2022/12/13/Hello%20World/</link>
+      <guid>http://yuwensq.github.io/2022/12/13/Hello%20World/</guid>
+      <pubDate>Tue, 13 Dec 2022 14:55:37 GMT</pubDate>
+      <description>
+      
+        &lt;p&gt;Hello World!&lt;/p&gt;
+      
+      </description>
+      
+      
+      <comments>http://yuwensq.github.io/2022/12/13/Hello%20World/#disqus_thread</comments>
+    </item>
+    
+  </channel>
+</rss>
