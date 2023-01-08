@@ -21,20 +21,22 @@
     var CONFIG = {"hostname":"yuwensq.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="大端和小端的差异和优缺点">
+  <meta name="description" content="灵活的第二操作数">
 <meta property="og:type" content="article">
-<meta property="og:title" content="大端模式和小端模式的差异和优缺点">
-<meta property="og:url" content="http://yuwensq.github.io/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/index.html">
+<meta property="og:title" content="ARM加法指令中的立即数">
+<meta property="og:url" content="http://yuwensq.github.io/2023/01/08/ARM%E5%8A%A0%E6%B3%95%E7%AB%8B%E5%8D%B3%E6%95%B0/index.html">
 <meta property="og:site_name" content="Binのblog">
-<meta property="og:description" content="大端和小端的差异和优缺点">
+<meta property="og:description" content="灵活的第二操作数">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-12-15T04:19:18.000Z">
-<meta property="article:modified_time" content="2023-01-03T05:42:27.982Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202301081158973.png">
+<meta property="article:published_time" content="2023-01-08T03:37:18.000Z">
+<meta property="article:modified_time" content="2023-01-08T04:45:00.562Z">
 <meta property="article:author" content="yuwensq">
-<meta property="article:tag" content="细碎知识">
+<meta property="article:tag" content="体系结构">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202301081158973.png">
 
-<link rel="canonical" href="http://yuwensq.github.io/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/">
+<link rel="canonical" href="http://yuwensq.github.io/2023/01/08/ARM%E5%8A%A0%E6%B3%95%E7%AB%8B%E5%8D%B3%E6%95%B0/">
 
 
 <script id="page-configurations">
@@ -47,7 +49,7 @@
   };
 </script>
 
-  <title>大端模式和小端模式的差异和优缺点 | Binのblog</title>
+  <title>ARM加法指令中的立即数 | Binのblog</title>
   
 
 
@@ -202,7 +204,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yuwensq.github.io/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/">
+    <link itemprop="mainEntityOfPage" href="http://yuwensq.github.io/2023/01/08/ARM%E5%8A%A0%E6%B3%95%E7%AB%8B%E5%8D%B3%E6%95%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -215,7 +217,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          大端模式和小端模式的差异和优缺点
+          ARM加法指令中的立即数
         </h1>
 
         <div class="post-meta">
@@ -224,16 +226,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-12-15 12:19:18" itemprop="dateCreated datePublished" datetime="2022-12-15T12:19:18+08:00">2022-12-15</time>
+              <time title="创建时间：2023-01-08 11:37:18 / 修改时间：12:45:00" itemprop="dateCreated datePublished" datetime="2023-01-08T11:37:18+08:00">2023-01-08</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-01-03 13:42:27" itemprop="dateModified" datetime="2023-01-03T13:42:27+08:00">2023-01-03</time>
-              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -248,7 +244,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>465</span>
+              <span>1.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -267,11 +263,27 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="大端和小端的差异和优缺点"><a href="#大端和小端的差异和优缺点" class="headerlink" title="大端和小端的差异和优缺点"></a>大端和小端的差异和优缺点</h1><span id="more"></span>
-<h2 id="大端模式和小端模式的差异"><a href="#大端模式和小端模式的差异" class="headerlink" title="大端模式和小端模式的差异"></a>大端模式和小端模式的差异</h2><p>这个很好理解，大端就是最低有效位位于低地址处；小端就是最低有效位位于高地址处。就不仔细解释了。</p>
-<h2 id="两者的优缺点"><a href="#两者的优缺点" class="headerlink" title="两者的优缺点"></a>两者的优缺点</h2><p>操作系统最后一节课，老师讲了讲linux内核中的网络部分。他提了一嘴大端和小端各自的优势，之前还从未思考过。老师说：“小端方便强制类型转换，大端方便判断正负”。想想还挺有道理。</p>
-<p>以存储一个有符号整数为例，对于大端模式来说，我们只需要访问变量地址的第一个字节便可以根据符号位来得到变量的正负；而对于小端模式来说，我们必须知道变量的具体长度，将变量的地址加上它的长度减一所得到的地址处的字节取出，才能得到变量的正负。</p>
-<p>强制类型转换方面，以c++从int强制类型转换为short为例，对于小端模式来说，我们只需要从变量地址开始取出sizeof(short)个字节便可以完成强制类型转换；而对于大端模式来说，我们还需要知道强制类型转换前变量的类型及int类型，从变量地址加sizeof(int)-sizeof(short)处开始，取sizeof(short)个字节才可以完成强制类型转换。</p>
+        <center>灵活的第二操作数</center>
+
+<span id="more"></span>
+<h1 id="ARM加法指令中的立即数"><a href="#ARM加法指令中的立即数" class="headerlink" title="ARM加法指令中的立即数"></a>ARM加法指令中的立即数</h1><p>最近在写编译器的时候，生成形如add sp, sp, #imm的arm汇编指令的时候经常报出立即数错误，然后查阅资料学习了一下。分享一下学习心得。</p>
+<p>首先，arm中有这样一种指令：ADD Rd, Rn, #imm12，这种指令里面，可以使用12位的立即数，立即数范围为0-4095，但是，这种指令在arm状态下是不可用的，在Thumb状态下才可用。</p>
+<p>在arm状态下，如果想加减一个立即数，使用的是这样的指令：ADD{S} Rd, Rn, Operand2。这里我们就需要关注一下arm中的第二操作数作为立即数时候能表示的范围。</p>
+<h2 id="灵活的第二操作数"><a href="#灵活的第二操作数" class="headerlink" title="灵活的第二操作数"></a>灵活的第二操作数</h2><p>上述说到的第二操作数在arm中的用法比较灵活，它可以作为：</p>
+<ul>
+<li>立即数</li>
+<li>寄存器</li>
+<li>寄存器移位</li>
+</ul>
+<p>这里我们重点说明第二操作数做立即数时候的表示机制和表示范围。</p>
+<p>首先，第二操作数有12位，因此我们不难想到按照传统的表示方法，它最多也就表示0-4095的立即数。而为了进一步扩大第二操作数能表示的立即数范围，arm对其中的立即数的存储格式进行了改动。这12位的格式如下图所示。由4位的位移和8位的立即数组成。这里我们定义”&gt;&gt;”符号为<strong>循环右移</strong>，那么这12位实际表示的立即数就是<script type="math/tex">immediate>>(2*rotate)</script></p>
+<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202301081158973.png" alt=""></p>
+<p>上述表达式比较书面的描述就是立即数是由一个8位的常数循环右移偶数位得到的。这里我们考虑这样设计的原因，rotate域为4位，那么它表示的范围为0-15，乘2之后可以表示0-30中的偶数，这也就是为什么是循环右移偶数位。同时，8位立即数最多可以循环右移30位，这就使得立即数能够表示的范围大大增加了(这里的范围不是指能表示的立即数的个数，而是大小)，不再只局限于0-4095了。但是我们进行思考，其实这种方式能够表示的立即数的个数是$2^8*2^4=2^{12}$，还是没变，只是能够表示更大的立即数了。</p>
+<p>虽然可以表示更大的立即数了，但是显然，有些立即数是无法使用这个格式来表示的，那么如何判断一个立即数可以使用这种格式来合法的表示就成了我们写编译器的人的一个要解决的问题。我看网上有比较奇怪的方法来判断一个立即数可不可以被合法的表示。这里我们用比较简单的方法，下面我提出两种比较简单的方法来判断一个立即数是否可以用上述这种12位的方式来表示。</p>
+<h3 id="判断方法一"><a href="#判断方法一" class="headerlink" title="判断方法一"></a>判断方法一</h3><p>既然立即数是由8位立即数循环右移偶数位得到的，那么我们倒过来，对于一个立即数，我们将他循环左移偶数位，如果结果能够用8位来表示，那么表示这个立即数可以被合法表示。</p>
+<p>代码如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isLegalImm</span><span class="params">(<span class="type">int</span> imm)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 这里为啥要强制类型转换嘞，因为下边要用到右移，而对于有符号数右移，如果是负数，算数右移会在前边补1。</span></span><br><span class="line">    <span class="comment">// 无符号数右移就是逻辑右移</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> num = (<span class="type">unsigned</span> <span class="type">int</span>)imm;</span><br><span class="line">    <span class="type">int</span> bit;</span><br><span class="line">    <span class="comment">// 思路就是每次循环左移两位，看看结果是否可以用8位来表示了。</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        num = ((num &lt;&lt; <span class="number">2</span>) | (num &gt;&gt; <span class="number">30</span>));</span><br><span class="line">        <span class="keyword">if</span> (num &lt;= <span class="number">0xff</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>(代码不保证对哦，但是思路应该没问题)</p>
+<h3 id="判断方法二"><a href="#判断方法二" class="headerlink" title="判断方法二"></a>判断方法二</h3><p>上边已经提到了，就算用arm里这种比较创新的表示方法，最多也就是表示$2^{12}$个立即数，一个立即数4个字节，那么存储所有合法立即数需要$2^{14}=16384$个字节，大约16KB的内存，如果我们内存资源不是很紧张的话，这里我们完全可以提前把所有能够合法表示的立即数给计算出来，存储到哈希表里，查的时候就会比较快。再次体现了空间和时间上的tradeoff。</p>
+<p>这种方法就不写代码了，比较简单。可以用C++里的map很方便的实现。</p>
 
     </div>
 
@@ -281,7 +293,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E7%BB%86%E7%A2%8E%E7%9F%A5%E8%AF%86/" rel="tag"># 细碎知识</a>
+              <a href="/tags/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" rel="tag"># 体系结构</a>
           </div>
 
         
@@ -290,13 +302,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/12/15/VSCODE%E6%AF%94%E8%BE%83%E4%BB%A3%E7%A0%81%E5%B7%AE%E5%BC%82/" rel="prev" title="VSCODE比较代码差异">
-      <i class="fa fa-chevron-left"></i> VSCODE比较代码差异
+    <a href="/2022/12/15/%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96/" rel="prev" title="硬件预取">
+      <i class="fa fa-chevron-left"></i> 硬件预取
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/12/15/%E7%A1%AC%E4%BB%B6%E9%A2%84%E5%8F%96/" rel="next" title="硬件预取">
-      硬件预取 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -356,7 +365,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%A7%E7%AB%AF%E5%92%8C%E5%B0%8F%E7%AB%AF%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">大端和小端的差异和优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82"><span class="nav-number">1.1.</span> <span class="nav-text">大端模式和小端模式的差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E8%80%85%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">两者的优缺点</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ARM%E5%8A%A0%E6%B3%95%E6%8C%87%E4%BB%A4%E4%B8%AD%E7%9A%84%E7%AB%8B%E5%8D%B3%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">ARM加法指令中的立即数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%81%B5%E6%B4%BB%E7%9A%84%E7%AC%AC%E4%BA%8C%E6%93%8D%E4%BD%9C%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">灵活的第二操作数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%96%B9%E6%B3%95%E4%B8%80"><span class="nav-number">1.1.1.</span> <span class="nav-text">判断方法一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%96%B9%E6%B3%95%E4%BA%8C"><span class="nav-number">1.1.2.</span> <span class="nav-text">判断方法二</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -508,6 +517,59 @@
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
@@ -522,7 +584,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'gitalk_comment',
       owner       : 'yuwensq',
       admin       : ['yuwensq'],
-      id          : '82f02f717840e14bee6a45d5c6c284ab',
+      id          : '6caa625c6cfe7e92334a5c69b1f68372',
         language: 'zh-CN',
       distractionFreeMode: true
     });
