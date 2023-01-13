@@ -1,6 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>ARM加法指令中的立即数</title>
+    <url>/2023/01/08/ARM%E5%8A%A0%E6%B3%95%E7%AB%8B%E5%8D%B3%E6%95%B0/</url>
+    <content><![CDATA[<center>灵活的第二操作数</center>
+
+<span id="more"></span>
+<h1 id="ARM加法指令中的立即数"><a href="#ARM加法指令中的立即数" class="headerlink" title="ARM加法指令中的立即数"></a>ARM加法指令中的立即数</h1><p>最近在写编译器的时候，生成形如add sp, sp, #imm的arm汇编指令的时候经常报出立即数错误，然后查阅资料学习了一下。分享一下学习心得。</p>
+<p>首先，arm中有这样一种指令：ADD Rd, Rn, #imm12，这种指令里面，可以使用12位的立即数，立即数范围为0-4095，但是，这种指令在arm状态下是不可用的，在Thumb状态下才可用。</p>
+<p>在arm状态下，如果想加减一个立即数，使用的是这样的指令：ADD{S} Rd, Rn, Operand2。这里我们就需要关注一下arm中的第二操作数作为立即数时候能表示的范围。</p>
+<h2 id="灵活的第二操作数"><a href="#灵活的第二操作数" class="headerlink" title="灵活的第二操作数"></a>灵活的第二操作数</h2><p>上述说到的第二操作数在arm中的用法比较灵活，它可以作为：</p>
+<ul>
+<li>立即数</li>
+<li>寄存器</li>
+<li>寄存器移位</li>
+</ul>
+<p>这里我们重点说明第二操作数做立即数时候的表示机制和表示范围。</p>
+<p>首先，第二操作数有12位，因此我们不难想到按照传统的表示方法，它最多也就表示0-4095的立即数。而为了进一步扩大第二操作数能表示的立即数范围，arm对其中的立即数的存储格式进行了改动。这12位的格式如下图所示。由4位的位移和8位的立即数组成。这里我们定义”&gt;&gt;”符号为<strong>循环右移</strong>，那么这12位实际表示的立即数就是<script type="math/tex">immediate>>(2*rotate)</script></p>
+<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202301081158973.png" alt=""></p>
+<p>上述表达式比较书面的描述就是立即数是由一个8位的常数循环右移偶数位得到的。这里我们考虑这样设计的原因，rotate域为4位，那么它表示的范围为0-15，乘2之后可以表示0-30中的偶数，这也就是为什么是循环右移偶数位。同时，8位立即数最多可以循环右移30位，这就使得立即数能够表示的范围大大增加了(这里的范围不是指能表示的立即数的个数，而是大小)，不再只局限于0-4095了。但是我们进行思考，其实这种方式能够表示的立即数的个数是$2^8*2^4=2^{12}$，还是没变，只是能够表示更大的立即数了。</p>
+<p>虽然可以表示更大的立即数了，但是显然，有些立即数是无法使用这个格式来表示的，那么如何判断一个立即数可以使用这种格式来合法的表示就成了我们写编译器的人的一个要解决的问题。我看网上有比较奇怪的方法来判断一个立即数可不可以被合法的表示。这里我们用比较简单的方法，下面我提出两种比较简单的方法来判断一个立即数是否可以用上述这种12位的方式来表示。</p>
+<h3 id="判断方法一"><a href="#判断方法一" class="headerlink" title="判断方法一"></a>判断方法一</h3><p>既然立即数是由8位立即数循环右移偶数位得到的，那么我们倒过来，对于一个立即数，我们将他循环左移偶数位，如果结果能够用8位来表示，那么表示这个立即数可以被合法表示。</p>
+<p>代码如下：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isLegalImm</span><span class="params">(<span class="type">int</span> imm)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 这里为啥要强制类型转换嘞，因为下边要用到右移，而对于有符号数右移，如果是负数，算数右移会在前边补1。</span></span><br><span class="line">    <span class="comment">// 无符号数右移就是逻辑右移</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> num = (<span class="type">unsigned</span> <span class="type">int</span>)imm;</span><br><span class="line">    <span class="comment">// 思路就是每次循环左移两位，看看结果是否可以用8位来表示了。</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (num &lt;= <span class="number">0xff</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        num = ((num &lt;&lt; <span class="number">2</span>) | (num &gt;&gt; <span class="number">30</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>(代码不保证对哦，但是思路应该没问题)</p>
+<h3 id="判断方法二"><a href="#判断方法二" class="headerlink" title="判断方法二"></a>判断方法二</h3><p>上边已经提到了，就算用arm里这种比较创新的表示方法，最多也就是表示$2^{12}$个立即数，一个立即数4个字节，那么存储所有合法立即数需要$2^{14}=16384$个字节，大约16KB的内存，如果我们内存资源不是很紧张的话，这里我们完全可以提前把所有能够合法表示的立即数给计算出来，存储到哈希表里，查的时候就会比较快。再次体现了空间和时间上的tradeoff。</p>
+<p>这种方法就不写代码了，比较简单。可以用C++里的map很方便的实现。</p>
+]]></content>
+      <tags>
+        <tag>体系结构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ARM浮点数翻译心得</title>
+    <url>/2023/01/13/ARM%E6%B5%AE%E7%82%B9%E6%95%B0%E7%BF%BB%E8%AF%91%E5%BF%83%E5%BE%97/</url>
+    <content><![CDATA[<center>ARM浮点数</center>
+
+<h1 id="ARM浮点数翻译心得"><a href="#ARM浮点数翻译心得" class="headerlink" title="ARM浮点数翻译心得"></a>ARM浮点数翻译心得</h1><p>编译原理实现的Sysy编译器支持使用float浮点数。这里讲一下arm汇编代码生成浮点数<br>部分遇到的一些问题和心得。</p>
+<p>把重要的东西放到前边来说，下边的文章可以一点不看。godbolt(<a href="https://godbolt.org/)这个网站真的强烈推荐用于写编译器时做个参考。长下图这样，在左边写代码，右边几乎可以实时出LLVM">https://godbolt.org/)这个网站真的强烈推荐用于写编译器时做个参考。长下图这样，在左边写代码，右边几乎可以实时出LLVM</a> IR代码或者汇编代码。还有很多种类和版本的编译器可以选择，在不知道该怎么翻译时这个网站可以作为一个不错的参考。主要就是方便，其实我们也完全可以在本机编译，但是比较麻烦，这个网站好处就是快，方便，编译器种类多，<strong>好看</strong>。<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202301131741547.jpg" alt=""></p>
+<h2 id="浮点数常量的表示"><a href="#浮点数常量的表示" class="headerlink" title="浮点数常量的表示"></a>浮点数常量的表示</h2><p>首先就是浮点字面值常量的表示了。以下边这一段代码为例：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">float</span> pi = <span class="number">3.14</span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">float</span> r = <span class="number">10.0</span>;</span><br><span class="line">    <span class="built_in">putfloat</span>(pi * r * r);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，出现了两个浮点数字面值常量，分别是3.14和10.0。其中一个赋值给全局变量，一个赋值给局部变量，但是它俩的表示方式其实是一样的。在arm汇编中我们应该怎么表示它们呢？比较直接的想法就是下边这样，直接把3.14给糊上去不就行啦？但是其实这样是不对的，汇编的时候会报错。</p>
+<figure class="highlight arm"><table><tr><td class="code"><pre><span class="line"><span class="symbol">.section</span> <span class="meta">.data</span></span><br><span class="line"><span class="symbol">.global</span> pi</span><br><span class="line"><span class="symbol">.size</span> pi, <span class="number">4</span></span><br><span class="line"><span class="symbol">pi:</span></span><br><span class="line">	<span class="meta">.word</span> <span class="number">3</span>.<span class="number">14</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>AFAIK just printing a decimal float works. If you really want a hexadecimal encoding, just reinterpret the floating-point number as an integer and print in hexadecimal; an “LLVM float” is just an IEEE float printed in hexadecimal.</p>
+</blockquote>
+<p>这里我们借鉴的是LLVM IR代码中浮点数表示的思路，上边这段话的最后一句，LLVM浮点数其实就是一个浮点数以16进制的形式打印出来(当然，这只是一种表现形式，除了16进制之外，还可以用科学计数法之类的表示LLVM浮点数)。在arm汇编中，我们直接把所有的float字面值常量都转译成对应的32位无符号整数就行了。重点就是保持无符号整数的位模式和它对应的float值的位模式一样(遵从IEEE格式)。代码也很简单，如下所示，value存储了对应的float常量值，保持位模式不变，把它翻译成无符号整数就行，然后打印的时候就打印v的值即可。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">float</span> value = (<span class="type">float</span>)<span class="built_in">dynamic_cast</span>&lt;ConstantSymbolEntry *&gt;(se)-&gt;<span class="built_in">getValue</span>();</span><br><span class="line"><span class="type">uint32_t</span> v = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">uint32_t</span> &amp;&gt;(value);</span><br><span class="line"><span class="comment">// 上边这一句也可以这样写</span></span><br><span class="line"><span class="comment">// uint32_t v = *((uint32_t*)&amp;value);</span></span><br></pre></td></tr></table></figure>
+<p>根据我们的处理方式，开头代码中的float pi = 3.14;可以如下翻译：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">.section .data</span><br><span class="line">.global pi</span><br><span class="line">.size pi, <span class="number">4</span></span><br><span class="line">pi:</span><br><span class="line">    .word <span class="number">1078523331</span></span><br></pre></td></tr></table></figure>
+<p>1078523331的16进制就是4048F5C3。</p>
+<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202301131716419.jpg" alt=""></p>
+<p>上图的网站为(<a href="https://tooltt.com/floatconverter/)。">https://tooltt.com/floatconverter/)。</a></p>
+<p>想把浮点数常量放到某个寄存器里也是类似的，把对应的无符号整数想办法放到寄存器里就行。</p>
+<h2 id="软浮点和硬浮点"><a href="#软浮点和硬浮点" class="headerlink" title="软浮点和硬浮点"></a>软浮点和硬浮点</h2><p>解决了浮点常量的表示之后我们就要考虑怎么翻译具体的浮点运算之类的指令了。这里有两种方案，一种是软浮点，就是没有显示的浮点运算指令，浮点运算纯靠调用ABI；还有一种方案是硬浮点，就是使用专用寄存器s那一套还有浮点运算指令。由于一开始arm芯片没有浮点运算单元FPU(就是个协处理器)，arm早期使用普通指令来模拟浮点运算，这种方法比较慢，但是用起来简单。慢慢地随着发展就逐渐的向使用专用的浮点运算指令过渡，这种方法比较快。但是，这里就出现了一个问题，对于没有FPU的芯片，硬浮点编译的程序显然跑不起来，这就是向前不兼容？那我有FPU，你总不能不让我用把，于是就出现了一个中间态，还是用的软浮点的一些规定和接口，但是软浮点里面ABI之类的可以用专门的浮点指令来实现。</p>
+<p>扯得有点远了，想了解更多上网搜，一搜一大堆，比如这个(<a href="https://blog.csdn.net/sdsszk/article/details/108680822)。这里我们只要明确，翻译浮点汇编代码时，有两种不同的方式，一种是软浮点，它的感觉就是要浮点运算就调用对应的函数，不需要其他的专用寄存器啥的；另一种是硬浮点，它的感觉就是为浮点运算再量身打造一套寄存器和指令，浮点运算就使用专门的寄存器和指令。下边会举几个例子来进行大致的说明。">https://blog.csdn.net/sdsszk/article/details/108680822)。这里我们只要明确，翻译浮点汇编代码时，有两种不同的方式，一种是软浮点，它的感觉就是要浮点运算就调用对应的函数，不需要其他的专用寄存器啥的；另一种是硬浮点，它的感觉就是为浮点运算再量身打造一套寄存器和指令，浮点运算就使用专门的寄存器和指令。下边会举几个例子来进行大致的说明。</a></p>
+<p>对了，还有一点就是用arm-linux-gnueabihf-gcc默认是硬浮点架构，arm-linux-gnueabi-gcc默认是软浮点架构，这里在编译libsysy.a这个库的时候要注意，不然链接的时候会出错。hf=hard float?</p>
+<h3 id="软浮点实现"><a href="#软浮点实现" class="headerlink" title="软浮点实现"></a>软浮点实现</h3><p>下边来举几个例子切身感受一下软浮点的风格。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">float</span> a, b, c; <span class="comment">// 这里就不赋初值了</span></span><br><span class="line">a = b + c;</span><br><span class="line">a = b - c;</span><br><span class="line">a = b * c;</span><br><span class="line">a = b / c;</span><br></pre></td></tr></table></figure>
+<p>对于上边这段代码，软浮点咋翻译嘞？如下所示：(手翻的，意思对，但不一定一点问题都没)</p>
+<figure class="highlight arm"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sub</span> <span class="built_in">sp</span>, <span class="built_in">sp</span>, <span class="number">#12</span> <span class="comment">; 开栈空间</span></span><br><span class="line"></span><br><span class="line"><span class="comment">; a = b + c;</span></span><br><span class="line"><span class="keyword">ldr</span> <span class="built_in">r0</span>, [<span class="built_in">fp</span>, #-<span class="number">8</span>]   <span class="comment">;</span></span><br><span class="line"><span class="keyword">ldr</span> <span class="built_in">r1</span>, [<span class="built_in">fp</span>, #-<span class="number">12</span>]  <span class="comment">; 取出b和c</span></span><br><span class="line"><span class="keyword">bl</span> __aeabi_fadd     <span class="comment">; 这个就是ABI，就是调库，就跟调用普通函数一样</span></span><br><span class="line"><span class="keyword">str</span> <span class="built_in">r0</span>, [<span class="built_in">fp</span>, #-<span class="number">4</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">; a = b - c;</span></span><br><span class="line"><span class="keyword">ldr</span> <span class="built_in">r0</span>, [<span class="built_in">fp</span>, #-<span class="number">8</span>]   <span class="comment">;</span></span><br><span class="line"><span class="keyword">ldr</span> <span class="built_in">r1</span>, [<span class="built_in">fp</span>, #-<span class="number">12</span>]  <span class="comment">; </span></span><br><span class="line"><span class="keyword">bl</span> __aeabi_fsub     <span class="comment">; </span></span><br><span class="line"><span class="keyword">str</span> <span class="built_in">r0</span>, [<span class="built_in">fp</span>, #-<span class="number">4</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">; a = b * c;</span></span><br><span class="line"><span class="keyword">ldr</span> <span class="built_in">r0</span>, [<span class="built_in">fp</span>, #-<span class="number">8</span>]   <span class="comment">;</span></span><br><span class="line"><span class="keyword">ldr</span> <span class="built_in">r1</span>, [<span class="built_in">fp</span>, #-<span class="number">12</span>]  <span class="comment">; </span></span><br><span class="line"><span class="keyword">bl</span> __aeabi_fmul     <span class="comment">; </span></span><br><span class="line"><span class="keyword">str</span> <span class="built_in">r0</span>, [<span class="built_in">fp</span>, #-<span class="number">4</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">; a = b / c;</span></span><br><span class="line"><span class="keyword">ldr</span> <span class="built_in">r0</span>, [<span class="built_in">fp</span>, #-<span class="number">8</span>]   <span class="comment">;</span></span><br><span class="line"><span class="keyword">ldr</span> <span class="built_in">r1</span>, [<span class="built_in">fp</span>, #-<span class="number">12</span>]  <span class="comment">; </span></span><br><span class="line"><span class="keyword">bl</span> __aeabi_fdiv     <span class="comment">; </span></span><br><span class="line"><span class="keyword">str</span> <span class="built_in">r0</span>, [<span class="built_in">fp</span>, #-<span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+<p>通过上述样例，应该很好找到软浮点的感觉，其实就是调函数。下边就没啥好说的了，这里再列出几个翻译时候会用到的函数吧。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>function</th>
+<th style="text-align:left">note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>__aeabi_fadd</td>
+<td style="text-align:left">浮点加</td>
+</tr>
+<tr>
+<td>__aeabi_fsub</td>
+<td style="text-align:left">浮点减</td>
+</tr>
+<tr>
+<td>__aeabi_fmul</td>
+<td style="text-align:left">浮点乘</td>
+</tr>
+<tr>
+<td>__aeabi_fdiv</td>
+<td style="text-align:left">浮点除</td>
+</tr>
+<tr>
+<td>__aeabi_fcmpeq</td>
+<td style="text-align:left">浮点比较，==</td>
+</tr>
+<tr>
+<td>__aeabi_fcmpge</td>
+<td style="text-align:left">浮点比较，&gt;=</td>
+</tr>
+<tr>
+<td>__aeabi_fcmplt</td>
+<td style="text-align:left">浮点比较，&lt;</td>
+</tr>
+<tr>
+<td>__aeabi_fcmple</td>
+<td style="text-align:left">浮点比较，&lt;=</td>
+</tr>
+<tr>
+<td>__aeabi_fcmpgt</td>
+<td style="text-align:left">浮点比较，&gt;</td>
+</tr>
+<tr>
+<td>__aeabi_f2iz</td>
+<td style="text-align:left">浮点转整型</td>
+</tr>
+<tr>
+<td>__aeabi_i2f</td>
+<td style="text-align:left">整型转浮点</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="硬浮点实现"><a href="#硬浮点实现" class="headerlink" title="硬浮点实现"></a>硬浮点实现</h3><p>至于硬浮点，就要用一套新的寄存器了s0-s31。</p>
+<p>还是翻译上边的代码，具体如下：</p>
+<figure class="highlight arm"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sub</span> <span class="built_in">sp</span>, <span class="built_in">sp</span>, <span class="number">#12</span> <span class="comment">; 开栈空间</span></span><br><span class="line"></span><br><span class="line"><span class="comment">; a = b + c</span></span><br><span class="line"><span class="symbol">vldr.32</span> <span class="built_in">s16</span>, [<span class="built_in">sp</span>, #-<span class="number">8</span>]</span><br><span class="line"><span class="symbol">vldr.32</span> <span class="built_in">s17</span>, [<span class="built_in">sp</span>, #-<span class="number">12</span>]</span><br><span class="line"><span class="symbol">vadd.f32</span> <span class="built_in">s18</span>, <span class="built_in">s16</span>, <span class="built_in">s17</span></span><br><span class="line"><span class="symbol">vstr.32</span> <span class="built_in">s18</span>, [<span class="built_in">sp</span>, #-<span class="number">4</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">; a = b - c</span></span><br><span class="line"><span class="symbol">vldr.32</span> <span class="built_in">s16</span>, [<span class="built_in">sp</span>, #-<span class="number">8</span>]</span><br><span class="line"><span class="symbol">vldr.32</span> <span class="built_in">s17</span>, [<span class="built_in">sp</span>, #-<span class="number">12</span>]</span><br><span class="line"><span class="symbol">vsub.f32</span> <span class="built_in">s18</span>, <span class="built_in">s16</span>, <span class="built_in">s17</span></span><br><span class="line"><span class="symbol">vstr.32</span> <span class="built_in">s18</span>, [<span class="built_in">sp</span>, #-<span class="number">4</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">; a = b * c</span></span><br><span class="line"><span class="symbol">vldr.32</span> <span class="built_in">s16</span>, [<span class="built_in">sp</span>, #-<span class="number">8</span>]</span><br><span class="line"><span class="symbol">vldr.32</span> <span class="built_in">s17</span>, [<span class="built_in">sp</span>, #-<span class="number">12</span>]</span><br><span class="line"><span class="symbol">vmul.f32</span> <span class="built_in">s18</span>, <span class="built_in">s16</span>, <span class="built_in">s17</span></span><br><span class="line"><span class="symbol">vstr.32</span> <span class="built_in">s18</span>, [<span class="built_in">sp</span>, #-<span class="number">4</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">; a = b / c</span></span><br><span class="line"><span class="symbol">vldr.32</span> <span class="built_in">s16</span>, [<span class="built_in">sp</span>, #-<span class="number">8</span>]</span><br><span class="line"><span class="symbol">vldr.32</span> <span class="built_in">s17</span>, [<span class="built_in">sp</span>, #-<span class="number">12</span>]</span><br><span class="line"><span class="symbol">vdiv.f32</span> <span class="built_in">s18</span>, <span class="built_in">s16</span>, <span class="built_in">s17</span></span><br><span class="line"><span class="symbol">vstr.32</span> <span class="built_in">s18</span>, [<span class="built_in">sp</span>, #-<span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+<p>可以看到，不再是调用函数了，浮点运算都有了自己的指令。想了解更多硬浮点的指令，可以去arm官网上看(<a href="https://developer.arm.com/documentation/den0018/a/NEON-and-VFP-Instruction-Summary/List-of-all-NEON-and-VFP-instructions?lang=en)。">https://developer.arm.com/documentation/den0018/a/NEON-and-VFP-Instruction-Summary/List-of-all-NEON-and-VFP-instructions?lang=en)。</a></p>
+<p>实现硬浮点，要改的代码更多。</p>
+<h2 id="ARM中的栈指针对齐"><a href="#ARM中的栈指针对齐" class="headerlink" title="ARM中的栈指针对齐"></a>ARM中的栈指针对齐</h2><p>按照约定，ARM中的堆栈指针要八字节对齐，否则在处理浮点数的时候可能会出现比较奇怪的错误。(<a href="https://blog.51cto.com/u_12956289/2917318)这里说明我们栈指针对齐的方法。先把栈指针逻辑右移三位，再把它逻辑左移三位，这样就8字节对齐了。">https://blog.51cto.com/u_12956289/2917318)这里说明我们栈指针对齐的方法。先把栈指针逻辑右移三位，再把它逻辑左移三位，这样就8字节对齐了。</a></p>
+<figure class="highlight arm"><table><tr><td class="code"><pre><span class="line"><span class="keyword">lsr</span> <span class="built_in">sp</span>, <span class="built_in">sp</span>, <span class="number">#3</span></span><br><span class="line"><span class="keyword">lsl</span> <span class="built_in">sp</span>, <span class="built_in">sp</span>, <span class="number">#3</span></span><br></pre></td></tr></table></figure>
+<h2 id="ARM中函数调用中浮点数和整数混合传参"><a href="#ARM中函数调用中浮点数和整数混合传参" class="headerlink" title="ARM中函数调用中浮点数和整数混合传参"></a>ARM中函数调用中浮点数和整数混合传参</h2><p>如果函数参数中既有整数又有浮点数，那么它们互不相干。也就是说，整数用r0-r3寄存器传递，浮点数用s0-s15寄存器传递。有可能有整数寄存器不够用了需要用栈传参，而此时浮点数s寄存器还够用的情况。可以看官网(<a href="https://developer.arm.com/documentation/den0018/a/Compiling-NEON-Instructions/NEON-assembler-and-ABI-restrictions/Passing-arguments-in-NEON-and-floating-point-registers?lang=en">https://developer.arm.com/documentation/den0018/a/Compiling-NEON-Instructions/NEON-assembler-and-ABI-restrictions/Passing-arguments-in-NEON-and-floating-point-registers?lang=en</a>)</p>
+]]></content>
+      <tags>
+        <tag>体系结构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/2022/12/13/Hello%20World/</url>
     <content><![CDATA[<p>Hello World!</p>
@@ -35,35 +163,6 @@
 ]]></content>
       <tags>
         <tag>细碎知识</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ARM加法指令中的立即数</title>
-    <url>/2023/01/08/ARM%E5%8A%A0%E6%B3%95%E7%AB%8B%E5%8D%B3%E6%95%B0/</url>
-    <content><![CDATA[<center>灵活的第二操作数</center>
-
-<span id="more"></span>
-<h1 id="ARM加法指令中的立即数"><a href="#ARM加法指令中的立即数" class="headerlink" title="ARM加法指令中的立即数"></a>ARM加法指令中的立即数</h1><p>最近在写编译器的时候，生成形如add sp, sp, #imm的arm汇编指令的时候经常报出立即数错误，然后查阅资料学习了一下。分享一下学习心得。</p>
-<p>首先，arm中有这样一种指令：ADD Rd, Rn, #imm12，这种指令里面，可以使用12位的立即数，立即数范围为0-4095，但是，这种指令在arm状态下是不可用的，在Thumb状态下才可用。</p>
-<p>在arm状态下，如果想加减一个立即数，使用的是这样的指令：ADD{S} Rd, Rn, Operand2。这里我们就需要关注一下arm中的第二操作数作为立即数时候能表示的范围。</p>
-<h2 id="灵活的第二操作数"><a href="#灵活的第二操作数" class="headerlink" title="灵活的第二操作数"></a>灵活的第二操作数</h2><p>上述说到的第二操作数在arm中的用法比较灵活，它可以作为：</p>
-<ul>
-<li>立即数</li>
-<li>寄存器</li>
-<li>寄存器移位</li>
-</ul>
-<p>这里我们重点说明第二操作数做立即数时候的表示机制和表示范围。</p>
-<p>首先，第二操作数有12位，因此我们不难想到按照传统的表示方法，它最多也就表示0-4095的立即数。而为了进一步扩大第二操作数能表示的立即数范围，arm对其中的立即数的存储格式进行了改动。这12位的格式如下图所示。由4位的位移和8位的立即数组成。这里我们定义”&gt;&gt;”符号为<strong>循环右移</strong>，那么这12位实际表示的立即数就是<script type="math/tex">immediate>>(2*rotate)</script></p>
-<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202301081158973.png" alt=""></p>
-<p>上述表达式比较书面的描述就是立即数是由一个8位的常数循环右移偶数位得到的。这里我们考虑这样设计的原因，rotate域为4位，那么它表示的范围为0-15，乘2之后可以表示0-30中的偶数，这也就是为什么是循环右移偶数位。同时，8位立即数最多可以循环右移30位，这就使得立即数能够表示的范围大大增加了(这里的范围不是指能表示的立即数的个数，而是大小)，不再只局限于0-4095了。但是我们进行思考，其实这种方式能够表示的立即数的个数是$2^8*2^4=2^{12}$，还是没变，只是能够表示更大的立即数了。</p>
-<p>虽然可以表示更大的立即数了，但是显然，有些立即数是无法使用这个格式来表示的，那么如何判断一个立即数可以使用这种格式来合法的表示就成了我们写编译器的人的一个要解决的问题。我看网上有比较奇怪的方法来判断一个立即数可不可以被合法的表示。这里我们用比较简单的方法，下面我提出两种比较简单的方法来判断一个立即数是否可以用上述这种12位的方式来表示。</p>
-<h3 id="判断方法一"><a href="#判断方法一" class="headerlink" title="判断方法一"></a>判断方法一</h3><p>既然立即数是由8位立即数循环右移偶数位得到的，那么我们倒过来，对于一个立即数，我们将他循环左移偶数位，如果结果能够用8位来表示，那么表示这个立即数可以被合法表示。</p>
-<p>代码如下：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isLegalImm</span><span class="params">(<span class="type">int</span> imm)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 这里为啥要强制类型转换嘞，因为下边要用到右移，而对于有符号数右移，如果是负数，算数右移会在前边补1。</span></span><br><span class="line">    <span class="comment">// 无符号数右移就是逻辑右移</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> num = (<span class="type">unsigned</span> <span class="type">int</span>)imm;</span><br><span class="line">    <span class="comment">// 思路就是每次循环左移两位，看看结果是否可以用8位来表示了。</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (num &lt;= <span class="number">0xff</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        num = ((num &lt;&lt; <span class="number">2</span>) | (num &gt;&gt; <span class="number">30</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>(代码不保证对哦，但是思路应该没问题)</p>
-<h3 id="判断方法二"><a href="#判断方法二" class="headerlink" title="判断方法二"></a>判断方法二</h3><p>上边已经提到了，就算用arm里这种比较创新的表示方法，最多也就是表示$2^{12}$个立即数，一个立即数4个字节，那么存储所有合法立即数需要$2^{14}=16384$个字节，大约16KB的内存，如果我们内存资源不是很紧张的话，这里我们完全可以提前把所有能够合法表示的立即数给计算出来，存储到哈希表里，查的时候就会比较快。再次体现了空间和时间上的tradeoff。</p>
-<p>这种方法就不写代码了，比较简单。可以用C++里的map很方便的实现。</p>
-]]></content>
-      <tags>
-        <tag>体系结构</tag>
       </tags>
   </entry>
   <entry>
