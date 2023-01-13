@@ -53,7 +53,7 @@
 <p>上图的网站为<a href="https://tooltt.com/floatconverter/">https://tooltt.com/floatconverter/</a>。</p>
 <p>想把浮点数常量放到某个寄存器里也是类似的，把对应的无符号整数想办法放到寄存器里就行。</p>
 <h2 id="软浮点和硬浮点"><a href="#软浮点和硬浮点" class="headerlink" title="软浮点和硬浮点"></a>软浮点和硬浮点</h2><p>解决了浮点常量的表示之后我们就要考虑怎么翻译具体的浮点运算之类的指令了。这里有两种方案，一种是软浮点，就是没有显示的浮点运算指令，浮点运算纯靠调用ABI；还有一种方案是硬浮点，就是使用专用寄存器s那一套还有浮点运算指令。由于一开始arm芯片没有浮点运算单元FPU(就是个协处理器)，arm早期使用普通指令来模拟浮点运算，这种方法比较慢，但是用起来简单。慢慢地随着发展就逐渐的向使用专用的浮点运算指令过渡，这种方法比较快。但是，这里就出现了一个问题，对于没有FPU的芯片，硬浮点编译的程序显然跑不起来，这就是向前不兼容？那我有FPU，你总不能不让我用把，于是就出现了一个中间态，还是用的软浮点的一些规定和接口，但是软浮点里面ABI之类的可以用专门的浮点指令来实现。</p>
-<p>扯得有点远了，想了解更多上网搜，一搜一大堆，比如这个<a href="https://blog.csdn.net/sdsszk/article/details/108680822">https://blog.csdn.net/sdsszk/article/details/108680822</a>。这里我们只要明确，翻译浮点汇编代码时，有两种不同的方式，一种是软浮点，它的感觉就是要浮点运算就调用对应的函数，不需要其他的专用寄存器啥的；另一种是硬浮点，它的感觉就是为浮点运算再量身打造一套寄存器和指令，浮点运算就使用专门的寄存器和指令。下边会举几个例子来进行大致的说明。</p>
+<p>扯得有点远了，想了解更多上网搜，一搜一大堆，比如<a href="https://blog.csdn.net/sdsszk/article/details/108680822">这个</a>。这里我们只要明确，翻译浮点汇编代码时，有两种不同的方式，一种是软浮点，它的感觉就是要浮点运算就调用对应的函数，不需要其他的专用寄存器啥的；另一种是硬浮点，它的感觉就是为浮点运算再量身打造一套寄存器和指令，浮点运算就使用专门的寄存器和指令。下边会举几个例子来进行大致的说明。</p>
 <p>对了，还有一点就是用arm-linux-gnueabihf-gcc默认是硬浮点架构，arm-linux-gnueabi-gcc默认是软浮点架构，这里在编译libsysy.a这个库的时候要注意，不然链接的时候会出错。hf=hard float?</p>
 <h3 id="软浮点实现"><a href="#软浮点实现" class="headerlink" title="软浮点实现"></a>软浮点实现</h3><p>下边来举几个例子切身感受一下软浮点的风格。</p>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">float</span> a, b, c; <span class="comment">// 这里就不赋初值了</span></span><br><span class="line">a = b + c;</span><br><span class="line">a = b - c;</span><br><span class="line">a = b * c;</span><br><span class="line">a = b / c;</span><br></pre></td></tr></table></figure>
