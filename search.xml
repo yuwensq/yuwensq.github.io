@@ -34,6 +34,7 @@
     <url>/2023/01/13/ARM%E6%B5%AE%E7%82%B9%E6%95%B0%E7%BF%BB%E8%AF%91%E5%BF%83%E5%BE%97/</url>
     <content><![CDATA[<center>ARM浮点数</center>
 
+<span id="more"></span>
 <h1 id="ARM浮点数翻译心得"><a href="#ARM浮点数翻译心得" class="headerlink" title="ARM浮点数翻译心得"></a>ARM浮点数翻译心得</h1><p>编译原理实现的Sysy编译器支持使用float浮点数。这里讲一下arm汇编代码生成浮点数<br>部分遇到的一些问题和心得。</p>
 <p>把重要的东西放到前边来说，下边的文章可以一点不看。godbolt(<a href="https://godbolt.org/)这个网站真的强烈推荐用于写编译器时做个参考。长下图这样，在左边写代码，右边几乎可以实时出LLVM">https://godbolt.org/)这个网站真的强烈推荐用于写编译器时做个参考。长下图这样，在左边写代码，右边几乎可以实时出LLVM</a> IR代码或者汇编代码。还有很多种类和版本的编译器可以选择，在不知道该怎么翻译时这个网站可以作为一个不错的参考。主要就是方便，其实我们也完全可以在本机编译，但是比较麻烦，这个网站好处就是快，方便，编译器种类多，<strong>好看</strong>。<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202301131741547.jpg" alt=""></p>
 <h2 id="浮点数常量的表示"><a href="#浮点数常量的表示" class="headerlink" title="浮点数常量的表示"></a>浮点数常量的表示</h2><p>首先就是浮点字面值常量的表示了。以下边这一段代码为例：</p>
