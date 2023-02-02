@@ -1,33 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>ARM加法指令中的立即数</title>
-    <url>/2023/01/08/ARM%E5%8A%A0%E6%B3%95%E7%AB%8B%E5%8D%B3%E6%95%B0/</url>
-    <content><![CDATA[<center>灵活的第二操作数</center>
-
+    <title>Hello World</title>
+    <url>/2022/12/13/Hello%20World/</url>
+    <content><![CDATA[<p>Hello World!</p>
 <span id="more"></span>
-<h1 id="ARM加法指令中的立即数"><a href="#ARM加法指令中的立即数" class="headerlink" title="ARM加法指令中的立即数"></a>ARM加法指令中的立即数</h1><p>最近在写编译器的时候，生成形如add sp, sp, #imm的arm汇编指令的时候经常报出立即数错误，然后查阅资料学习了一下。分享一下学习心得。</p>
-<p>首先，arm中有这样一种指令：ADD Rd, Rn, #imm12，这种指令里面，可以使用12位的立即数，立即数范围为0-4095，但是，这种指令在arm状态下是不可用的，在Thumb状态下才可用。</p>
-<p>在arm状态下，如果想加减一个立即数，使用的是这样的指令：ADD{S} Rd, Rn, Operand2。这里我们就需要关注一下arm中的第二操作数作为立即数时候能表示的范围。</p>
-<h2 id="灵活的第二操作数"><a href="#灵活的第二操作数" class="headerlink" title="灵活的第二操作数"></a>灵活的第二操作数</h2><p>上述说到的第二操作数在arm中的用法比较灵活，它可以作为：</p>
-<ul>
-<li>立即数</li>
-<li>寄存器</li>
-<li>寄存器移位</li>
-</ul>
-<p>这里我们重点说明第二操作数做立即数时候的表示机制和表示范围。</p>
-<p>首先，第二操作数有12位，因此我们不难想到按照传统的表示方法，它最多也就表示0-4095的立即数。而为了进一步扩大第二操作数能表示的立即数范围，arm对其中的立即数的存储格式进行了改动。这12位的格式如下图所示。由4位的位移和8位的立即数组成。这里我们定义”&gt;&gt;”符号为<strong>循环右移</strong>，那么这12位实际表示的立即数就是<script type="math/tex">immediate>>(2*rotate)</script></p>
-<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202301081158973.png" alt=""></p>
-<p>上述表达式比较书面的描述就是立即数是由一个8位的常数循环右移偶数位得到的。这里我们考虑这样设计的原因，rotate域为4位，那么它表示的范围为0-15，乘2之后可以表示0-30中的偶数，这也就是为什么是循环右移偶数位。同时，8位立即数最多可以循环右移30位，这就使得立即数能够表示的范围大大增加了(这里的范围不是指能表示的立即数的个数，而是大小)，不再只局限于0-4095了。但是我们进行思考，其实这种方式能够表示的立即数的个数是$2^8*2^4=2^{12}$，还是没变，只是能够表示更大的立即数了。</p>
-<p>虽然可以表示更大的立即数了，但是显然，有些立即数是无法使用这个格式来表示的，那么如何判断一个立即数可以使用这种格式来合法的表示就成了我们写编译器的人的一个要解决的问题。我看网上有比较奇怪的方法来判断一个立即数可不可以被合法的表示。这里我们用比较简单的方法，下面我提出两种比较简单的方法来判断一个立即数是否可以用上述这种12位的方式来表示。</p>
-<h3 id="判断方法一"><a href="#判断方法一" class="headerlink" title="判断方法一"></a>判断方法一</h3><p>既然立即数是由8位立即数循环右移偶数位得到的，那么我们倒过来，对于一个立即数，我们将他循环左移偶数位，如果结果能够用8位来表示，那么表示这个立即数可以被合法表示。</p>
-<p>代码如下：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isLegalImm</span><span class="params">(<span class="type">int</span> imm)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 这里为啥要强制类型转换嘞，因为下边要用到右移，而对于有符号数右移，如果是负数，算数右移会在前边补1。</span></span><br><span class="line">    <span class="comment">// 无符号数右移就是逻辑右移</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> num = (<span class="type">unsigned</span> <span class="type">int</span>)imm;</span><br><span class="line">    <span class="comment">// 思路就是每次循环左移两位，看看结果是否可以用8位来表示了。</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (num &lt;= <span class="number">0xff</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        num = ((num &lt;&lt; <span class="number">2</span>) | (num &gt;&gt; <span class="number">30</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>(代码不保证对哦，但是思路应该没问题)</p>
-<h3 id="判断方法二"><a href="#判断方法二" class="headerlink" title="判断方法二"></a>判断方法二</h3><p>上边已经提到了，就算用arm里这种比较创新的表示方法，最多也就是表示$2^{12}$个立即数，一个立即数4个字节，那么存储所有合法立即数需要$2^{14}=16384$个字节，大约16KB的内存，如果我们内存资源不是很紧张的话，这里我们完全可以提前把所有能够合法表示的立即数给计算出来，存储到哈希表里，查的时候就会比较快。再次体现了空间和时间上的tradeoff。</p>
-<p>这种方法就不写代码了，比较简单。可以用C++里的map很方便的实现。</p>
+<p>Welcome to Bin’s blog.</p>
 ]]></content>
-      <tags>
-        <tag>体系结构</tag>
-      </tags>
   </entry>
   <entry>
     <title>ARM浮点数翻译心得</title>
@@ -130,12 +109,46 @@
       </tags>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/2022/12/13/Hello%20World/</url>
-    <content><![CDATA[<p>Hello World!</p>
+    <title>ARM加法指令中的立即数</title>
+    <url>/2023/01/08/ARM%E5%8A%A0%E6%B3%95%E7%AB%8B%E5%8D%B3%E6%95%B0/</url>
+    <content><![CDATA[<center>灵活的第二操作数</center>
+
 <span id="more"></span>
-<p>Welcome to Bin’s blog.</p>
+<h1 id="ARM加法指令中的立即数"><a href="#ARM加法指令中的立即数" class="headerlink" title="ARM加法指令中的立即数"></a>ARM加法指令中的立即数</h1><p>最近在写编译器的时候，生成形如add sp, sp, #imm的arm汇编指令的时候经常报出立即数错误，然后查阅资料学习了一下。分享一下学习心得。</p>
+<p>首先，arm中有这样一种指令：ADD Rd, Rn, #imm12，这种指令里面，可以使用12位的立即数，立即数范围为0-4095，但是，这种指令在arm状态下是不可用的，在Thumb状态下才可用。</p>
+<p>在arm状态下，如果想加减一个立即数，使用的是这样的指令：ADD{S} Rd, Rn, Operand2。这里我们就需要关注一下arm中的第二操作数作为立即数时候能表示的范围。</p>
+<h2 id="灵活的第二操作数"><a href="#灵活的第二操作数" class="headerlink" title="灵活的第二操作数"></a>灵活的第二操作数</h2><p>上述说到的第二操作数在arm中的用法比较灵活，它可以作为：</p>
+<ul>
+<li>立即数</li>
+<li>寄存器</li>
+<li>寄存器移位</li>
+</ul>
+<p>这里我们重点说明第二操作数做立即数时候的表示机制和表示范围。</p>
+<p>首先，第二操作数有12位，因此我们不难想到按照传统的表示方法，它最多也就表示0-4095的立即数。而为了进一步扩大第二操作数能表示的立即数范围，arm对其中的立即数的存储格式进行了改动。这12位的格式如下图所示。由4位的位移和8位的立即数组成。这里我们定义”&gt;&gt;”符号为<strong>循环右移</strong>，那么这12位实际表示的立即数就是<script type="math/tex">immediate>>(2*rotate)</script></p>
+<p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202301081158973.png" alt=""></p>
+<p>上述表达式比较书面的描述就是立即数是由一个8位的常数循环右移偶数位得到的。这里我们考虑这样设计的原因，rotate域为4位，那么它表示的范围为0-15，乘2之后可以表示0-30中的偶数，这也就是为什么是循环右移偶数位。同时，8位立即数最多可以循环右移30位，这就使得立即数能够表示的范围大大增加了(这里的范围不是指能表示的立即数的个数，而是大小)，不再只局限于0-4095了。但是我们进行思考，其实这种方式能够表示的立即数的个数是$2^8*2^4=2^{12}$，还是没变，只是能够表示更大的立即数了。</p>
+<p>虽然可以表示更大的立即数了，但是显然，有些立即数是无法使用这个格式来表示的，那么如何判断一个立即数可以使用这种格式来合法的表示就成了我们写编译器的人的一个要解决的问题。我看网上有比较奇怪的方法来判断一个立即数可不可以被合法的表示。这里我们用比较简单的方法，下面我提出两种比较简单的方法来判断一个立即数是否可以用上述这种12位的方式来表示。</p>
+<h3 id="判断方法一"><a href="#判断方法一" class="headerlink" title="判断方法一"></a>判断方法一</h3><p>既然立即数是由8位立即数循环右移偶数位得到的，那么我们倒过来，对于一个立即数，我们将他循环左移偶数位，如果结果能够用8位来表示，那么表示这个立即数可以被合法表示。</p>
+<p>代码如下：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isLegalImm</span><span class="params">(<span class="type">int</span> imm)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 这里为啥要强制类型转换嘞，因为下边要用到右移，而对于有符号数右移，如果是负数，算数右移会在前边补1。</span></span><br><span class="line">    <span class="comment">// 无符号数右移就是逻辑右移</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> num = (<span class="type">unsigned</span> <span class="type">int</span>)imm;</span><br><span class="line">    <span class="comment">// 思路就是每次循环左移两位，看看结果是否可以用8位来表示了。</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (num &lt;= <span class="number">0xff</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        num = ((num &lt;&lt; <span class="number">2</span>) | (num &gt;&gt; <span class="number">30</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>(代码不保证对哦，但是思路应该没问题)</p>
+<h3 id="判断方法二"><a href="#判断方法二" class="headerlink" title="判断方法二"></a>判断方法二</h3><p>上边已经提到了，就算用arm里这种比较创新的表示方法，最多也就是表示$2^{12}$个立即数，一个立即数4个字节，那么存储所有合法立即数需要$2^{14}=16384$个字节，大约16KB的内存，如果我们内存资源不是很紧张的话，这里我们完全可以提前把所有能够合法表示的立即数给计算出来，存储到哈希表里，查的时候就会比较快。再次体现了空间和时间上的tradeoff。</p>
+<p>这种方法就不写代码了，比较简单。可以用C++里的map很方便的实现。</p>
 ]]></content>
+      <tags>
+        <tag>体系结构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大端模式和小端模式的差异和优缺点</title>
+    <url>/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/</url>
+    <content><![CDATA[<h1 id="大端和小端的差异和优缺点"><a href="#大端和小端的差异和优缺点" class="headerlink" title="大端和小端的差异和优缺点"></a>大端和小端的差异和优缺点</h1><span id="more"></span>
+<h2 id="大端模式和小端模式的差异"><a href="#大端模式和小端模式的差异" class="headerlink" title="大端模式和小端模式的差异"></a>大端模式和小端模式的差异</h2><p>这个很好理解，大端就是最低有效位位于低地址处；小端就是最低有效位位于高地址处。就不仔细解释了。</p>
+<h2 id="两者的优缺点"><a href="#两者的优缺点" class="headerlink" title="两者的优缺点"></a>两者的优缺点</h2><p>操作系统最后一节课，老师讲了讲linux内核中的网络部分。他提了一嘴大端和小端各自的优势，之前还从未思考过。老师说：“小端方便强制类型转换，大端方便判断正负”。想想还挺有道理。</p>
+<p>以存储一个有符号整数为例，对于大端模式来说，我们只需要访问变量地址的第一个字节便可以根据符号位来得到变量的正负；而对于小端模式来说，我们必须知道变量的具体长度，将变量的地址加上它的长度减一所得到的地址处的字节取出，才能得到变量的正负。</p>
+<p>强制类型转换方面，以c++从int强制类型转换为short为例，对于小端模式来说，我们只需要从变量地址开始取出sizeof(short)个字节便可以完成强制类型转换；而对于大端模式来说，我们还需要知道强制类型转换前变量的类型及int类型，从变量地址加sizeof(int)-sizeof(short)处开始，取sizeof(short)个字节才可以完成强制类型转换。</p>
+]]></content>
+      <tags>
+        <tag>细碎知识</tag>
+      </tags>
   </entry>
   <entry>
     <title>VSCODE比较代码差异</title>
@@ -151,19 +164,6 @@
 ]]></content>
       <tags>
         <tag>小科技</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>大端模式和小端模式的差异和优缺点</title>
-    <url>/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/</url>
-    <content><![CDATA[<h1 id="大端和小端的差异和优缺点"><a href="#大端和小端的差异和优缺点" class="headerlink" title="大端和小端的差异和优缺点"></a>大端和小端的差异和优缺点</h1><span id="more"></span>
-<h2 id="大端模式和小端模式的差异"><a href="#大端模式和小端模式的差异" class="headerlink" title="大端模式和小端模式的差异"></a>大端模式和小端模式的差异</h2><p>这个很好理解，大端就是最低有效位位于低地址处；小端就是最低有效位位于高地址处。就不仔细解释了。</p>
-<h2 id="两者的优缺点"><a href="#两者的优缺点" class="headerlink" title="两者的优缺点"></a>两者的优缺点</h2><p>操作系统最后一节课，老师讲了讲linux内核中的网络部分。他提了一嘴大端和小端各自的优势，之前还从未思考过。老师说：“小端方便强制类型转换，大端方便判断正负”。想想还挺有道理。</p>
-<p>以存储一个有符号整数为例，对于大端模式来说，我们只需要访问变量地址的第一个字节便可以根据符号位来得到变量的正负；而对于小端模式来说，我们必须知道变量的具体长度，将变量的地址加上它的长度减一所得到的地址处的字节取出，才能得到变量的正负。</p>
-<p>强制类型转换方面，以c++从int强制类型转换为short为例，对于小端模式来说，我们只需要从变量地址开始取出sizeof(short)个字节便可以完成强制类型转换；而对于大端模式来说，我们还需要知道强制类型转换前变量的类型及int类型，从变量地址加sizeof(int)-sizeof(short)处开始，取sizeof(short)个字节才可以完成强制类型转换。</p>
-]]></content>
-      <tags>
-        <tag>细碎知识</tag>
       </tags>
   </entry>
   <entry>
