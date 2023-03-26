@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+<meta name="google-site-verification" content="shLV7pWjuSoknas-ok2dWcAcFfqvewwwT3TajDgoxpc" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142329526.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212142329526.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yuwensq.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="zram">
+<meta property="og:type" content="article">
+<meta property="og:title" content="zram代码阅读">
+<meta property="og:url" content="http://yuwensq.github.io/2023/03/26/zram%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB/index.html">
+<meta property="og:site_name" content="Binのblog">
+<meta property="og:description" content="zram">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202303261654044.jpg">
+<meta property="article:published_time" content="2023-03-26T10:14:26.000Z">
+<meta property="article:modified_time" content="2023-03-26T10:16:02.577Z">
+<meta property="article:author" content="yuwensq">
+<meta property="article:tag" content="OS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202303261654044.jpg">
+
+<link rel="canonical" href="http://yuwensq.github.io/2023/03/26/zram%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>zram代码阅读 | Binのblog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/rss2.xml" title="Binのblog" type="application/rss+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a target="_blank" rel="noopener" href="https://github.com/yuwensq" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Binのblog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Binのblog</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-rss">
+
+    <a href="/rss2.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yuwensq.github.io/2023/03/26/zram%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="yuwensq">
+      <meta itemprop="description" content="Coding For Fun">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Binのblog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          zram代码阅读
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-03-26 18:14:26 / 修改时间：18:16:02" itemprop="dateCreated datePublished" datetime="2023-03-26T18:14:26+08:00">2023-03-26</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <center>zram</center>
+
+<span id="more"></span>
+<h1 id="斌斌陪你读之——zram"><a href="#斌斌陪你读之——zram" class="headerlink" title="斌斌陪你读之——zram"></a>斌斌陪你读之——zram</h1><h2 id="zram是啥"><a href="#zram是啥" class="headerlink" title="zram是啥"></a>zram是啥</h2><p>首先，zram是啥，zram是linux使用内存抽象出来的一个块设备。zram常用作交换设备使用，类似于一个ssd，zram会对写入其中的页进行压缩处理，从而起到节省内存同时提高程序启动速率的效果。对于没有交换设备或者磁盘读写次数有限的情况，zram可以起到比较好的加速效果。<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Zram">(zram wiki)</a>。</p>
+<h2 id="zram大体框架"><a href="#zram大体框架" class="headerlink" title="zram大体框架"></a>zram大体框架</h2><p><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202303261654044.jpg" alt=""></p>
+<p>如上图所示(不太会画图)，zram向外部呈现一个block device的抽象，向外界提供块设备的接口；内部，由于zram使用的是物理内存，需要一个内存分配器，这里zram使用zsmalloc内存分配器；而zram则负责对用户向其写入的数据进行压缩处理，将压缩后的数据存储到zsmalloc分配的内存中。压缩主要通过zcomp部分来进行，这部分比较简单，之后再说。</p>
+<h2 id="代码阅读"><a href="#代码阅读" class="headerlink" title="代码阅读"></a>代码阅读</h2><p>下面，对linux中zram部分的源码进行大致地阅读。内核版本为<strong>linux5.4</strong>。</p>
+<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><h4 id="zram结构体-zram类"><a href="#zram结构体-zram类" class="headerlink" title="zram结构体(zram类)"></a>zram结构体(zram类)</h4><p>下方代码为zram类的实现，对其中的成员变量的含义进行解释。</p>
+<ul>
+<li>table: 是一个zram_table_entry数组，数组的每一项对应了zram中的一页，存储了该页的元数据信息。</li>
+<li>mem_pool: 前文提到zram使用zsmalloc进行内存的分配和管理。这个mem_pool就相当于zsmalloc给zram分配的一个内存池，zram可以从其中读写数据。</li>
+<li>comp: 这个是zram的压缩模块，zram对数据压缩和解压时通过comp的一些函数进行。</li>
+<li>disk: linux内核中，用gendisk结构体表示一个磁盘设备或分区。其中存储了一些关于zram的信息，如设备号啥的，同时disk还指向了zram处理I/O的一些API，这个就相当于zram对外部提供的一个块设备抽象。<a target="_blank" rel="noopener" href="https://blog.csdn.net/wlli1985/article/details/83065898">一个参考blog</a></li>
+<li>init_lock: 一个读写锁，就是可以有很多人同时读，但只能有一个人写的那种锁。</li>
+<li>limit_pages: 这个就是zram这个块设备最多有几页，也是table数组的最大长度。</li>
+<li>stats: statistics的缩写？这个变量存储了zram执行过程中的一些统计信息。</li>
+<li>disksize: 整个zram磁盘有多大，字节为单位。</li>
+<li>comperssor: 压缩算法的名字。</li>
+<li><font color="red">之后的后边再写，别忘了</font>
+
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">zram</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">zram_table_entry</span> *<span class="title">table</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">zs_pool</span> *<span class="title">mem_pool</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">zcomp</span> *<span class="title">comp</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">gendisk</span> *<span class="title">disk</span>;</span></span><br><span class="line">	<span class="comment">/* Prevent concurrent execution of device init */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rw_semaphore</span> <span class="title">init_lock</span>;</span></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * the number of pages zram can consume for storing compressed data</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> limit_pages;</span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">zram_stats</span> <span class="title">stats</span>;</span></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * This is the limit on amount of *uncompressed* worth of data</span></span><br><span class="line"><span class="comment">	 * we can store in a disk.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	u64 disksize;	<span class="comment">/* bytes */</span></span><br><span class="line">	<span class="type">char</span> compressor[CRYPTO_MAX_ALG_NAME];</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * zram is claimed so open request will be failed</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">bool</span> claim; <span class="comment">/* Protected by bdev-&gt;bd_mutex */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">backing_dev</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_ZRAM_WRITEBACK</span></span><br><span class="line">	<span class="type">spinlock_t</span> wb_limit_lock;</span><br><span class="line">	<span class="type">bool</span> wb_limit_enable;</span><br><span class="line">	u64 bd_wb_limit;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">block_device</span> *<span class="title">bdev</span>;</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> old_block_size;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> *bitmap;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> nr_pages;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_ZRAM_MEMORY_TRACKING</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dentry</span> *<span class="title">debugfs_dir</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="zram-table-entry结构体"><a href="#zram-table-entry结构体" class="headerlink" title="zram_table_entry结构体"></a>zram_table_entry结构体</h4><p>描述了zram中一个页的元数据。</p>
+<ul>
+<li>handle: 如果当前页被写回到磁盘，这个handle存储磁盘页的句柄。</li>
+<li>element: 如果当前页被相同的元素填充，element存储这个元素的值。</li>
+<li>flags: 这个低位存储当前页中存储的对象的大小，高位存储当前页的状态。</li>
+<li>ac_time: 不知道干嘛的，看注释像是track计时用的。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">zram_table_entry</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="type">unsigned</span> <span class="type">long</span> handle;</span><br><span class="line">		<span class="type">unsigned</span> <span class="type">long</span> element;</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> flags;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_ZRAM_MEMORY_TRACKING</span></span><br><span class="line">	<span class="type">ktime_t</span> ac_time;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="zram-pageflags枚举"><a href="#zram-pageflags枚举" class="headerlink" title="zram_pageflags枚举"></a>zram_pageflags枚举</h4><p>这个枚举就是上述zram_table_entry结构体中flags变量高位的含义，注释给的比较清楚了，这里不做过多说明。其中ZRAM_LOCK这一位比较有意思，这一位充当了一个自旋锁的作用，对该页加锁时将该位置1，解锁清零。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> ZRAM_FLAG_SHIFT 24</span></span><br><span class="line"><span class="comment">/* Flags for zram pages (table[page_no].flags) */</span></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">zram_pageflags</span> &#123;</span></span><br><span class="line">	<span class="comment">/* zram slot is locked */</span></span><br><span class="line">	ZRAM_LOCK = ZRAM_FLAG_SHIFT,</span><br><span class="line">	ZRAM_SAME,	<span class="comment">/* Page consists the same element */</span></span><br><span class="line">	ZRAM_WB,	<span class="comment">/* page is stored on backing_device */</span></span><br><span class="line">	ZRAM_UNDER_WB,	<span class="comment">/* page is under writeback */</span></span><br><span class="line">	ZRAM_HUGE,	<span class="comment">/* Incompressible page */</span></span><br><span class="line">	ZRAM_IDLE,	<span class="comment">/* not accessed page since last idle marking */</span></span><br><span class="line"></span><br><span class="line">	__NR_ZRAM_PAGEFLAGS,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="zram-stats结构体"><a href="#zram-stats结构体" class="headerlink" title="zram_stats结构体"></a>zram_stats结构体</h4><p>这个结构体存储了zram运行过程中的一些统计信息，注释给的也比较清楚。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">zram_stats</span> &#123;</span></span><br><span class="line">	<span class="type">atomic64_t</span> compr_data_size;	<span class="comment">/* compressed size of pages stored */</span></span><br><span class="line">	<span class="type">atomic64_t</span> num_reads;	<span class="comment">/* failed + successful */</span></span><br><span class="line">	<span class="type">atomic64_t</span> num_writes;	<span class="comment">/* --do-- */</span></span><br><span class="line">	<span class="type">atomic64_t</span> failed_reads;	<span class="comment">/* can happen when memory is too low */</span></span><br><span class="line">	<span class="type">atomic64_t</span> failed_writes;	<span class="comment">/* can happen when memory is too low */</span></span><br><span class="line">	<span class="type">atomic64_t</span> invalid_io;	<span class="comment">/* non-page-aligned I/O requests */</span></span><br><span class="line">	<span class="type">atomic64_t</span> notify_free;	<span class="comment">/* no. of swap slot free notifications */</span></span><br><span class="line">	<span class="type">atomic64_t</span> same_pages;		<span class="comment">/* no. of same element filled pages */</span></span><br><span class="line">	<span class="type">atomic64_t</span> huge_pages;		<span class="comment">/* no. of huge pages */</span></span><br><span class="line">	<span class="type">atomic64_t</span> pages_stored;	<span class="comment">/* no. of pages currently stored */</span></span><br><span class="line">	<span class="type">atomic_long_t</span> max_used_pages;	<span class="comment">/* no. of maximum pages stored */</span></span><br><span class="line">	<span class="type">atomic64_t</span> writestall;		<span class="comment">/* no. of write slow paths */</span></span><br><span class="line">	<span class="type">atomic64_t</span> miss_free;		<span class="comment">/* no. of missed free */</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span>	CONFIG_ZRAM_WRITEBACK</span></span><br><span class="line">	<span class="type">atomic64_t</span> bd_count;		<span class="comment">/* no. of pages in backing device */</span></span><br><span class="line">	<span class="type">atomic64_t</span> bd_reads;		<span class="comment">/* no. of reads from backing device */</span></span><br><span class="line">	<span class="type">atomic64_t</span> bd_writes;		<span class="comment">/* no. of writes from backing device */</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="一些宏"><a href="#一些宏" class="headerlink" title="一些宏"></a>一些宏</h4><ul>
+<li>PAGE_SHIFT: 一个页几位，12位。</li>
+<li>SECTOR_SHIFT: 一个扇区几位，linux中好像都是9，即一个扇区512字节。</li>
+<li>SECTORS_PER_PAGE_SHIFT: 一页中的扇区号占几位，12-9=3，即一个页中有8个扇区。</li>
+<li>SECTORS_PER_PAGE: 一个页中的扇区数。</li>
+<li>ZRAM_LOGICAL_BLOCK_SHIFT: zram逻辑块占几位，这里是12，一页。</li>
+<li>ZRAM_LOGICAL_BLOCK_SIZE: zram逻辑块大小，4K。</li>
+<li>ZRAM_SECTOR_PER_LOGICAL_BLOCK: zram中每个逻辑块中有几个扇区，8个。</li>
+</ul>
+<p>这里涉及到了扇区和块的一些定义，网上的解释挺多的。<a target="_blank" rel="noopener" href="https://blog.csdn.net/aspirinvagrant/article/details/11365209?spm=1001.2101.3001.6661.1&amp;utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-11365209-blog-79369698.235%5Ev27%5Epc_relevant_landingrelevant&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-11365209-blog-79369698.235%5Ev27%5Epc_relevant_landingrelevant&amp;utm_relevant_index=1">比如这个</a>，请自行查阅。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> SECTORS_PER_PAGE_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SECTORS_PER_PAGE	(1 &lt;&lt; SECTORS_PER_PAGE_SHIFT)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ZRAM_LOGICAL_BLOCK_SHIFT 12</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ZRAM_LOGICAL_BLOCK_SIZE	(1 &lt;&lt; ZRAM_LOGICAL_BLOCK_SHIFT)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ZRAM_SECTOR_PER_LOGICAL_BLOCK	\</span></span><br><span class="line"><span class="meta">	(1 &lt;&lt; (ZRAM_LOGICAL_BLOCK_SHIFT - SECTOR_SHIFT))</span></span><br></pre></td></tr></table></figure>
+<h3 id="具体代码"><a href="#具体代码" class="headerlink" title="具体代码"></a>具体代码</h3><p>看具体代码之前可以先看看linux驱动程序怎么编写的，以及一些关于设备I/O方面的知识。这里有一些参考网站:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/liangzc1124/article/details/129329309?spm=1001.2101.3001.6650.1&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EAD_ESQUERY%7Eyljh-1-129329309-blog-122869046.235%5Ev27%5Epc_relevant_landingrelevant&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EAD_ESQUERY%7Eyljh-1-129329309-blog-122869046.235%5Ev27%5Epc_relevant_landingrelevant&amp;utm_relevant_index=2">超长文解析Linux块设备驱动编写方法</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/a154299/category_10386557.html">如何编写一个简单的Linux驱动</a></li>
+<li><a target="_blank" rel="noopener" href="https://aliez22.github.io/posts/11537/">通用块层 struct bio 详解</a></li>
+<li><a target="_blank" rel="noopener" href="http://m.blog.chinaunix.net/uid-28449808-id-5820139.html">块设备剖析之关键数据结构分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv17063262?from=search">Linux内核之块设备驱动</a></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这两句表示zram像是一个ssd</span></span><br><span class="line">blk_queue_flag_set(QUEUE_FLAG_NONROT, zram-&gt;disk-&gt;<span class="built_in">queue</span>);                             blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, zram-&gt;disk-&gt;<span class="built_in">queue</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="valid-io-request"><a href="#valid-io-request" class="headerlink" title="valid_io_request"></a>valid_io_request</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 判断io是否有效 */</span></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">bool</span> <span class="title function_">valid_io_request</span><span class="params">(<span class="keyword">struct</span> zram *zram,</span></span><br><span class="line"><span class="params">		<span class="type">sector_t</span> start, <span class="type">unsigned</span> <span class="type">int</span> size)</span></span><br><span class="line">&#123;</span><br><span class="line">	u64 end, bound;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* unaligned request */</span></span><br><span class="line">    <span class="comment">// start应该就是扇区号，然后这里扇区号要对齐到每个块中的扇区个数</span></span><br><span class="line">	<span class="keyword">if</span> (unlikely(start &amp; (ZRAM_SECTOR_PER_LOGICAL_BLOCK - <span class="number">1</span>)))</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="comment">// size是字节数，size要按照块大小对齐</span></span><br><span class="line">	<span class="keyword">if</span> (unlikely(size &amp; (ZRAM_LOGICAL_BLOCK_SIZE - <span class="number">1</span>)))</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">	end = start + (size &gt;&gt; SECTOR_SHIFT);</span><br><span class="line">	bound = zram-&gt;disksize &gt;&gt; SECTOR_SHIFT;</span><br><span class="line">	<span class="comment">/* out of range range */</span></span><br><span class="line">	<span class="keyword">if</span> (unlikely(start &gt;= bound || end &gt; bound || start &gt; end))</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* I/O request is valid */</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="zram-make-request"><a href="#zram-make-request" class="headerlink" title="__zram_make_request"></a>__zram_make_request</h2><p><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/770779">REQ_OP_DISCARD</a></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> __zram_make_request(<span class="keyword">struct</span> zram *zram, <span class="keyword">struct</span> bio *bio)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> offset;</span><br><span class="line">	u32 index;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">bio_vec</span> <span class="title">bvec</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">bvec_iter</span> <span class="title">iter</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 扇区对应的页的页号</span></span><br><span class="line">	index = bio-&gt;bi_iter.bi_sector &gt;&gt; SECTORS_PER_PAGE_SHIFT;</span><br><span class="line">    <span class="comment">// 扇区在index页中的字节偏移 </span></span><br><span class="line">	offset = (bio-&gt;bi_iter.bi_sector &amp;</span><br><span class="line">		  (SECTORS_PER_PAGE - <span class="number">1</span>)) &lt;&lt; SECTOR_SHIFT;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// bio是对block的清除操作</span></span><br><span class="line">	<span class="keyword">switch</span> (bio_op(bio)) &#123;</span><br><span class="line">	<span class="keyword">case</span> REQ_OP_DISCARD:</span><br><span class="line">	<span class="keyword">case</span> REQ_OP_WRITE_ZEROES:</span><br><span class="line">		zram_bio_discard(zram, index, offset, bio);</span><br><span class="line">		bio_endio(bio);</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	bio_for_each_segment(bvec, bio, iter) &#123;</span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">bio_vec</span> <span class="title">bv</span> =</span> bvec;</span><br><span class="line">		<span class="type">unsigned</span> <span class="type">int</span> unwritten = bvec.bv_len;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">do</span> &#123;</span><br><span class="line">			bv.bv_len = <span class="type">min_t</span>(<span class="type">unsigned</span> <span class="type">int</span>, PAGE_SIZE - offset,</span><br><span class="line">							unwritten);</span><br><span class="line">			<span class="keyword">if</span> (zram_bvec_rw(zram, &amp;bv, index, offset,</span><br><span class="line">					 bio_op(bio), bio) &lt; <span class="number">0</span>)</span><br><span class="line">				<span class="keyword">goto</span> out;</span><br><span class="line"></span><br><span class="line">			bv.bv_offset += bv.bv_len;</span><br><span class="line">			unwritten -= bv.bv_len;</span><br><span class="line"></span><br><span class="line">			update_position(&amp;index, &amp;offset, &amp;bv);</span><br><span class="line">		&#125; <span class="keyword">while</span> (unwritten);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	bio_endio(bio);</span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">out:</span><br><span class="line">	bio_io_error(bio);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/OS/" rel="tag"># OS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/01/13/ARM%E6%B5%AE%E7%82%B9%E6%95%B0%E7%BF%BB%E8%AF%91%E5%BF%83%E5%BE%97/" rel="prev" title="ARM浮点数翻译心得">
+      <i class="fa fa-chevron-left"></i> ARM浮点数翻译心得
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%8C%E6%96%8C%E9%99%AA%E4%BD%A0%E8%AF%BB%E4%B9%8B%E2%80%94%E2%80%94zram"><span class="nav-number">1.</span> <span class="nav-text">斌斌陪你读之——zram</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#zram%E6%98%AF%E5%95%A5"><span class="nav-number">1.1.</span> <span class="nav-text">zram是啥</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zram%E5%A4%A7%E4%BD%93%E6%A1%86%E6%9E%B6"><span class="nav-number">1.2.</span> <span class="nav-text">zram大体框架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB"><span class="nav-number">1.3.</span> <span class="nav-text">代码阅读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#zram%E7%BB%93%E6%9E%84%E4%BD%93-zram%E7%B1%BB"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">zram结构体(zram类)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zram-table-entry%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">zram_table_entry结构体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zram-pageflags%E6%9E%9A%E4%B8%BE"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">zram_pageflags枚举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zram-stats%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">zram_stats结构体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%AE%8F"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">一些宏</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.2.</span> <span class="nav-text">具体代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#valid-io-request"><span class="nav-number">1.4.</span> <span class="nav-text">valid_io_request</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zram-make-request"><span class="nav-number">1.5.</span> <span class="nav-text">__zram_make_request</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">yuwensq</p>
+  <div class="site-description" itemprop="description">Coding For Fun</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yuwensq" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yuwensq" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yuwensq</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">16k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">14 分钟</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+-->
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '1178aea8b21515288be7',
+      clientSecret: '7d80f698d65b99b6ae3831f01bfe1d7c9f3fc378',
+      repo        : 'gitalk_comment',
+      owner       : 'yuwensq',
+      admin       : ['yuwensq'],
+      id          : 'fddad00a8842e8a5573fc94421c46c84',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
