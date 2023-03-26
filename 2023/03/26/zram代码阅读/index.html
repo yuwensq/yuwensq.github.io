@@ -30,7 +30,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202303261654044.jpg">
 <meta property="article:published_time" content="2023-03-26T10:14:26.000Z">
-<meta property="article:modified_time" content="2023-03-26T10:16:02.577Z">
+<meta property="article:modified_time" content="2023-03-26T12:27:58.379Z">
 <meta property="article:author" content="yuwensq">
 <meta property="article:tag" content="OS">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-03-26 18:14:26 / 修改时间：18:16:02" itemprop="dateCreated datePublished" datetime="2023-03-26T18:14:26+08:00">2023-03-26</time>
+              <time title="创建时间：2023-03-26 18:14:26 / 修改时间：20:27:58" itemprop="dateCreated datePublished" datetime="2023-03-26T18:14:26+08:00">2023-03-26</time>
             </span>
 
           
@@ -244,14 +244,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6k</span>
+              <span>6.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -288,7 +288,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">zram</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">zram_table_entry</span> *<span class="title">table</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">zs_pool</span> *<span class="title">mem_pool</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">zcomp</span> *<span class="title">comp</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">gendisk</span> *<span class="title">disk</span>;</span></span><br><span class="line">	<span class="comment">/* Prevent concurrent execution of device init */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rw_semaphore</span> <span class="title">init_lock</span>;</span></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * the number of pages zram can consume for storing compressed data</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> limit_pages;</span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">zram_stats</span> <span class="title">stats</span>;</span></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * This is the limit on amount of *uncompressed* worth of data</span></span><br><span class="line"><span class="comment">	 * we can store in a disk.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	u64 disksize;	<span class="comment">/* bytes */</span></span><br><span class="line">	<span class="type">char</span> compressor[CRYPTO_MAX_ALG_NAME];</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * zram is claimed so open request will be failed</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">bool</span> claim; <span class="comment">/* Protected by bdev-&gt;bd_mutex */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">backing_dev</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_ZRAM_WRITEBACK</span></span><br><span class="line">	<span class="type">spinlock_t</span> wb_limit_lock;</span><br><span class="line">	<span class="type">bool</span> wb_limit_enable;</span><br><span class="line">	u64 bd_wb_limit;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">block_device</span> *<span class="title">bdev</span>;</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> old_block_size;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> *bitmap;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> nr_pages;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> CONFIG_ZRAM_MEMORY_TRACKING</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">dentry</span> *<span class="title">debugfs_dir</span>;</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <h4 id="zram-table-entry结构体"><a href="#zram-table-entry结构体" class="headerlink" title="zram_table_entry结构体"></a>zram_table_entry结构体</h4><p>描述了zram中一个页的元数据。</p>
 <ul>
-<li>handle: 如果当前页被写回到磁盘，这个handle存储磁盘页的句柄。</li>
+<li>handle: 当前页在mem_pool中的句柄。注意，这个handle不指向具体的地址，而是在需要的时候调用一个函数，将handle对应的内容映射到一个地址处，数据访问完之后再撤销这个映射。</li>
 <li>element: 如果当前页被相同的元素填充，element存储这个元素的值。</li>
 <li>flags: 这个低位存储当前页中存储的对象的大小，高位存储当前页的状态。</li>
 <li>ac_time: 不知道干嘛的，看注释像是track计时用的。</li>
@@ -469,7 +469,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">14 分钟</span>
+    <span title="站点阅读时长">15 分钟</span>
 </div>
 
 <!--
