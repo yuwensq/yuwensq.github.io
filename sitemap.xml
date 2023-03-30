@@ -4,7 +4,7 @@
   <url>
     <loc>http://yuwensq.github.io/2023/03/26/zram%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB/</loc>
     
-    <lastmod>2023-03-26</lastmod>
+    <lastmod>2023-03-30</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -108,13 +108,6 @@
   </url>
   
   <url>
-    <loc>http://yuwensq.github.io/tags/%E5%B0%8F%E7%A7%91%E6%8A%80/</loc>
-    <lastmod>2023-03-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://yuwensq.github.io/tags/OS/</loc>
     <lastmod>2023-03-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -123,6 +116,13 @@
   
   <url>
     <loc>http://yuwensq.github.io/tags/%E7%BB%86%E7%A2%8E%E7%9F%A5%E8%AF%86/</loc>
+    <lastmod>2023-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://yuwensq.github.io/tags/%E5%B0%8F%E7%A7%91%E6%8A%80/</loc>
     <lastmod>2023-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
