@@ -30,6 +30,15 @@
       </tags>
   </entry>
   <entry>
+    <title>Hello World</title>
+    <url>/2022/12/13/Hello%20World/</url>
+    <content><![CDATA[<center>Hello World!</center>
+
+<span id="more"></span>
+<p>Welcome to Bin’s blog.</p>
+]]></content>
+  </entry>
+  <entry>
     <title>ARM浮点数翻译心得</title>
     <url>/2023/01/13/ARM%E6%B5%AE%E7%82%B9%E6%95%B0%E7%BF%BB%E8%AF%91%E5%BF%83%E5%BE%97/</url>
     <content><![CDATA[<center>ARM浮点数</center>
@@ -130,17 +139,11 @@
       </tags>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/2022/12/13/Hello%20World/</url>
-    <content><![CDATA[<p>Hello World!</p>
-<span id="more"></span>
-<p>Welcome to Bin’s blog.</p>
-]]></content>
-  </entry>
-  <entry>
     <title>VSCODE比较代码差异</title>
     <url>/2022/12/15/VSCODE%E6%AF%94%E8%BE%83%E4%BB%A3%E7%A0%81%E5%B7%AE%E5%BC%82/</url>
-    <content><![CDATA[<h1 id="VSCODE比较代码差异"><a href="#VSCODE比较代码差异" class="headerlink" title="VSCODE比较代码差异"></a>VSCODE比较代码差异</h1><span id="more"></span>
+    <content><![CDATA[<center>VSCODE比较代码差异</center>
+
+<span id="more"></span>
 <p>这学期的实验老是要把代码从上一个实验移到下一个实验，由于使用win+vmware，我直接在windows的vscode里进行代码编写，利用vscode连接linux虚拟机。当要合并代码时就很烦。之前使用linux的meld，但是要进入到vmware里。最后我发现，使用vscode也可以进行代码的对比和合并，虽然功能大概没有meld强大（<strong>而且目前好像只能比较两个文件</strong>），但是目前够用了。下面简单说一下大致用法。</p>
 <ul>
 <li>选中两个文件<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202212081131962.jpg" alt=""></li>
@@ -251,7 +254,9 @@
   <entry>
     <title>大端模式和小端模式的差异和优缺点</title>
     <url>/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/</url>
-    <content><![CDATA[<h1 id="大端和小端的差异和优缺点"><a href="#大端和小端的差异和优缺点" class="headerlink" title="大端和小端的差异和优缺点"></a>大端和小端的差异和优缺点</h1><span id="more"></span>
+    <content><![CDATA[<center>大端和小端的差异和优缺点</center>
+
+<span id="more"></span>
 <h2 id="大端模式和小端模式的差异"><a href="#大端模式和小端模式的差异" class="headerlink" title="大端模式和小端模式的差异"></a>大端模式和小端模式的差异</h2><p>这个很好理解，大端就是最低有效位位于低地址处；小端就是最低有效位位于高地址处。就不仔细解释了。</p>
 <h2 id="两者的优缺点"><a href="#两者的优缺点" class="headerlink" title="两者的优缺点"></a>两者的优缺点</h2><p>操作系统最后一节课，老师讲了讲linux内核中的网络部分。他提了一嘴大端和小端各自的优势，之前还从未思考过。老师说：“小端方便强制类型转换，大端方便判断正负”。想想还挺有道理。</p>
 <p>以存储一个有符号整数为例，对于大端模式来说，我们只需要访问变量地址的第一个字节便可以根据符号位来得到变量的正负；而对于小端模式来说，我们必须知道变量的具体长度，将变量的地址加上它的长度减一所得到的地址处的字节取出，才能得到变量的正负。</p>
