@@ -436,6 +436,22 @@
 <li>3NF:在第二范式的基础上，数据表中如果不存在非关键字段对任一候选关键字段的传递函数依赖，则符合第三范式。简而言之，第三范式就是属性不依赖于其它非主属性。</li>
 <li>BCNF:任何主属性不能对主键子集依赖。<br>一般来说，数据库只需满足第三范式（3NF）就行了。</li>
 </ol>
+<h3 id="编译原理"><a href="#编译原理" class="headerlink" title="编译原理"></a>编译原理</h3><p><strong>1.从代码到可执行程序的步骤</strong></p>
+<ol>
+<li>预处理：主要是处理注释和宏定义。</li>
+<li>编译：把预处理后的代码编译为目标平台的汇编代码。<ol>
+<li>词法分析：将字符流识别为单词流。</li>
+<li>语法分析：识别语句的语法结构，构建语法树。</li>
+<li>语义分析：类型检查，类型转换之类的。</li>
+<li>中间代码生成：将语法树翻译为中间代码。</li>
+<li>中间代码优化：优化中间代码。</li>
+<li>目标代码生成：将中间代码翻译为目标代码。</li>
+<li>目标代码优化：优化目标代码。</li>
+</ol>
+</li>
+<li>汇编：对于编译生成的汇编代码，汇编器将其翻译为二进制可重定位文件。</li>
+<li>链接：文件中可能引用外部符号，链接主要就是处理这些符号引用，把多个可重定位文件合成一个可执行文件，并计算符号的地址之类的。</li>
+</ol>
 <h2 id="英文"><a href="#英文" class="headerlink" title="英文"></a>英文</h2><h3 id="自我介绍"><a href="#自我介绍" class="headerlink" title="自我介绍"></a>自我介绍</h3><p>Hello everyone!</p>
 <p>// 大致介绍背景<br>I’m Xu WenBin from NANKAI University and my major is computer science.</p>
 <p>// 介绍高中情况，省一<br>Since high school, I have had a strong interest in computer science and start to learn algorithm knowledge. And I won the provincial first prize in NOIP.</p>
