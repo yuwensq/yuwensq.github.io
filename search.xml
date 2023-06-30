@@ -382,6 +382,12 @@
 <p>目标是让$\Sigma_{i=1}^{n}(y_i-h_\theta(x_i))^2$最小。</p>
 <h3 id="离散数学"><a href="#离散数学" class="headerlink" title="离散数学"></a>离散数学</h3><h2 id="专业课"><a href="#专业课" class="headerlink" title="专业课"></a>专业课</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><h3 id="计组"><a href="#计组" class="headerlink" title="计组"></a>计组</h3><p><strong>1.USB接鼠标/键盘有什么区别？</strong></p>
 <p>北航面试的问题，这是啥意思鸭。我个人理解的是对于键盘来说，按键的到来随时间是离散的；而对于鼠标来说，其位置移动随时间是连续的。因此如果接入键盘，按下一个按键就发起一个中断即可，如果接入鼠标，则需要将鼠标的位置移动先缓存到缓冲区中，缓冲区满了再统一发起中断？</p>
+<p><strong>2.计算机是如何启动的？</strong></p>
+<ol>
+<li>BIOS: 计算机通电后，首先读取并执行BIOS（基本输入输出系统）程序。BIOS程序首先进行硬件自检，检查硬件是否能满足运行的基本条件。BIOS感觉和AM点类似？</li>
+<li>启动程序: 读取MBR主引导记录，根据其中的内容将操作系统加载到内存中。</li>
+<li>控制权交给操作系统，OS创建一个init进程，其pid为1，是所有进程的祖先。然后init进程加载系统的各个模块。</li>
+</ol>
 <h3 id="计网"><a href="#计网" class="headerlink" title="计网"></a>计网</h3><p><strong>1.各个层的作用</strong></p>
 <ul>
 <li>应用层：满足用户应用需求。</li>
