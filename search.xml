@@ -405,8 +405,8 @@
 <p>$h_\theta(x)=\theta_0+\theta_1x+\theta_2x^2+…+\theta_nx^n+…$</p>
 <p>目标是让$\Sigma_{i=1}^{n}(y_i-h_\theta(x_i))^2$最小。</p>
 <p><strong>3.可微和可导的关系</strong></p>
-<p>对于一元函数来说，可微$\Leftrightarrow $可导$\Rightarrow$连续$\Rightarrow$可积分</p>
-<p>对于多元函数来说，函数在一点可微$\Leftrightarrow$函数的所有偏导数在该点存在并连续。</p>
+<p>对于一元函数来说，可微$\Leftrightarrow $可导$\Rightarrow$连续$\Rightarrow$可积。</p>
+<p>对于多元函数来说，函数在一点可微$\Leftrightarrow$函数的所有偏导数在该点存在并连续$\Rightarrow$连续$\Rightarrow$可积。</p>
 <p>导数和微分本质是两种东西，前者是函数在某个方向上的变化率，后者是映射的局部线性近似。<a href="https://www.zhihu.com/question/67235804">ref</a></p>
 <h2 id="专业课"><a href="#专业课" class="headerlink" title="专业课"></a>专业课</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p><strong>1.几个排序算法介绍，时空复杂度，稳定性咋样？</strong></p>
 <h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><h3 id="计组"><a href="#计组" class="headerlink" title="计组"></a>计组</h3><p><strong>1.USB接鼠标/键盘有什么区别？</strong></p>
