@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202306302310153.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/yuwensq/imgBase/master/202306302311512.jpg">
 <meta property="article:published_time" content="2023-06-26T08:35:05.000Z">
-<meta property="article:modified_time" content="2023-06-30T15:11:43.374Z">
+<meta property="article:modified_time" content="2023-07-01T02:02:19.901Z">
 <meta property="article:author" content="yuwensq">
 <meta property="article:tag" content="CS">
 <meta name="twitter:card" content="summary">
@@ -235,7 +235,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-30 23:11:43" itemprop="dateModified" datetime="2023-06-30T23:11:43+08:00">2023-06-30</time>
+                <time title="修改时间：2023-07-01 10:02:19" itemprop="dateModified" datetime="2023-07-01T10:02:19+08:00">2023-07-01</time>
               </span>
 
           
@@ -251,7 +251,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.7k</span>
+              <span>7.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -321,6 +321,27 @@
 <p>$X_1, X_2, …, X_n…$独立同分布，$EX_i=\mu, DX_i=\sigma^2, 0&lt;\sigma^2&lt;+\infty$，则$\lim_{n \to \infty} P(\frac{\Sigma_{i=1}^nX_i-n\mu}{\sqrt{n}\sigma  }\le x)=\Phi_0(x)$。</p>
 </blockquote>
 <p>大量独立同分布的随机变量的和服从正态分布。</p>
+<h3 id="离散数学"><a href="#离散数学" class="headerlink" title="离散数学"></a>离散数学</h3><p><strong>1.群、环、域</strong></p>
+<p><a target="_blank" rel="noopener" href="http://sparkandshine.net/algebraic-structure-primer-group-ring-field-vector-space/">参考网站，下方图片来源</a></p>
+<blockquote>
+<p>代数主要研究的是运算规则。一门代数， 其实都是从某种具体的运算体系中抽象出一些基本规则，建立一个公理体系，然后在这基础上进行研究。一个集合再加上一套运算规则，就构成一个代数结构。</p>
+</blockquote>
+<p>他三都是抽象代数，就是说把数字抽象成一个集合，集合里的元素不管是啥。然后把具体的加、减、乘、除之类的二元运算抽象成运算，不管运算具体干啥。<br>表示就表示为代数结构(R, *)，R是对象集合，*是集合上的二元运算。如果代数结构满足了某些性质，就给他们起相应的名字。</p>
+<p>群：<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202306302310153.jpg" alt=""></p>
+<p>环和域：<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202306302311512.jpg" alt=""></p>
+<p><strong>2.命题逻辑与谓词逻辑</strong></p>
+<p>命题逻辑具有局限性，比如苏格拉底三段论就没法表示。</p>
+<p>在命题逻辑中，命题是具有真假意义的陈述句。从语法上分析，一个陈述句由主语和谓语两部分组成。在谓词逻辑中，为揭示命题内部结构及其不同命题的内部结构关系，对命题进行分析，并且把主语称为个体或客体，把谓语称为谓词。</p>
+<p>在命题逻辑中，一个可以判断真假的陈述句就是研究的最小单元；谓词逻辑是对命题逻辑更进一步的细分，将一个陈述句分为客体和谓词。</p>
+<p><strong>3.幂集</strong></p>
+<p>集合的集合：$P(A)=\left \{x|x\subseteq A \right \}$<br>估计叫做幂集是因为里面的元素个数正好是A集合元素个数的2的幂次。</p>
+<p><strong>4.关系</strong></p>
+<p>定义 如果一个集合满足以下条件之一：</p>
+<ol>
+<li>集合非空, 且它的元素都是有序对</li>
+<li>集合是空集<br>则称该集合为一个二元关系, 简称为关系，记作R.<br>如<x,y>∈R, 可记作xRy；</li>
+</ol>
+<p>设A,B为集合,A×B的任何子集所定义的二元<br>关系叫做从A到B的二元关系, 当A=B时则叫做 A上<br>的二元关系.</p>
 <h3 id="高数"><a href="#高数" class="headerlink" title="高数"></a>高数</h3><p><strong>1.连续和一致连续</strong></p>
 <p>连续：$\lim_{x \to x_0}f(x)=f(x_0)$。即$\forall \varepsilon &gt; 0, \exists \delta &gt; 0, \forall x\in D_f, 0 &lt; |x-x_0| &lt; \delta, 使得|f(x)-f(x_0)|&lt;\varepsilon$。</p>
 <p>一致连续：$\forall \varepsilon &gt; 0, \exists \delta &gt; 0, \forall x_1, x_2\in D_f, |x_1-x_2| &lt; \delta, 都有|f(x_1)-f(x_2)|&lt;\varepsilon$。</p>
@@ -329,14 +350,6 @@
 <p>就是用几个线性无关的函数的线性组合来对样本进行拟合。目标就是让预测值和实际值的差的平方和最小。求每个函数前边的系数。具体解法就是对每个参数求偏导，让偏导数等于零。</p>
 <p>$h_\theta(x)=\theta_0+\theta_1x+\theta_2x^2+…+\theta_nx^n+…$</p>
 <p>目标是让$\Sigma_{i=1}^{n}(y_i-h_\theta(x_i))^2$最小。</p>
-<h3 id="离散数学"><a href="#离散数学" class="headerlink" title="离散数学"></a>离散数学</h3><p><strong>1.群、环、域</strong></p>
-<p><a target="_blank" rel="noopener" href="http://sparkandshine.net/algebraic-structure-primer-group-ring-field-vector-space/">参考网站，下方图片来源</a></p>
-<blockquote>
-<p>代数主要研究的是运算规则。一门代数， 其实都是从某种具体的运算体系中抽象出一些基本规则，建立一个公理体系，然后在这基础上进行研究。一个集合再加上一套运算规则，就构成一个代数结构。</p>
-</blockquote>
-<p>他三都是抽象代数，就是说把数字抽象成一个集合，集合里的元素不管是啥。然后把具体的加、减、乘、除之类的二元运算抽象成运算，不管运算具体干啥。<br>表示就表示为代数结构(R, <em>)，R是对象集合，\</em>是集合上的二元运算。如果代数结构满足了某些性质，就给他们起相应的名字。</p>
-<p>群：<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202306302310153.jpg" alt=""></p>
-<p>环和域：<br><img src="https://raw.githubusercontent.com/yuwensq/imgBase/master/202306302311512.jpg" alt=""></p>
 <h2 id="专业课"><a href="#专业课" class="headerlink" title="专业课"></a>专业课</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><h3 id="计组"><a href="#计组" class="headerlink" title="计组"></a>计组</h3><p><strong>1.USB接鼠标/键盘有什么区别？</strong></p>
 <p>北航面试的问题，这是啥意思鸭。我个人理解的是对于键盘来说，按键的到来随时间是离散的；而对于鼠标来说，其位置移动随时间是连续的。因此如果接入键盘，按下一个按键就发起一个中断即可，如果接入鼠标，则需要将鼠标的位置移动先缓存到缓冲区中，缓冲区满了再统一发起中断？</p>
 <p><strong>2.计算机是如何启动的？</strong></p>
@@ -497,7 +510,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6"><span class="nav-number">1.</span> <span class="nav-text">数学</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">线性代数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">概率论</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">高数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6"><span class="nav-number">1.4.</span> <span class="nav-text">离散数学</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%93%E4%B8%9A%E8%AF%BE"><span class="nav-number">2.</span> <span class="nav-text">专业课</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.2.</span> <span class="nav-text">操作系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%BB%84"><span class="nav-number">2.3.</span> <span class="nav-text">计组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%BD%91"><span class="nav-number">2.4.</span> <span class="nav-text">计网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.5.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86"><span class="nav-number">2.6.</span> <span class="nav-text">编译原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8B%B1%E6%96%87"><span class="nav-number">3.</span> <span class="nav-text">英文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.1.</span> <span class="nav-text">自我介绍</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6"><span class="nav-number">1.</span> <span class="nav-text">数学</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">线性代数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">概率论</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6"><span class="nav-number">1.3.</span> <span class="nav-text">离散数学</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%95%B0"><span class="nav-number">1.4.</span> <span class="nav-text">高数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%93%E4%B8%9A%E8%AF%BE"><span class="nav-number">2.</span> <span class="nav-text">专业课</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.2.</span> <span class="nav-text">操作系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%BB%84"><span class="nav-number">2.3.</span> <span class="nav-text">计组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%BD%91"><span class="nav-number">2.4.</span> <span class="nav-text">计网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.5.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86"><span class="nav-number">2.6.</span> <span class="nav-text">编译原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8B%B1%E6%96%87"><span class="nav-number">3.</span> <span class="nav-text">英文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.1.</span> <span class="nav-text">自我介绍</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -565,7 +578,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">35 分钟</span>
+    <span title="站点阅读时长">36 分钟</span>
 </div>
 
 <!--
