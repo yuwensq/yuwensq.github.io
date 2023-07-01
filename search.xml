@@ -393,6 +393,9 @@
 <li>集合是空集<br>则称该集合为一个二元关系, 简称为关系，记作R.<br>如<x,y>∈R, 可记作xRy；</li>
 </ol>
 <p>设A,B为集合,A×B的任何子集所定义的二元<br>关系叫做从A到B的二元关系, 当A=B时则叫做 A上<br>的二元关系.</p>
+<p><strong>5.集合的划分</strong></p>
+<p>集合的划分指的是把集合划分成若干个小的集合，这些小集合并起来等于原来的大集合，且小集合两两之间没有交集。这些小集合就叫做原来集合的一个划分。</p>
+<p>等价关系的商集就是一个划分。</p>
 <h3 id="高数"><a href="#高数" class="headerlink" title="高数"></a>高数</h3><p><strong>1.连续和一致连续</strong></p>
 <p>连续：$\lim_{x \to x_0}f(x)=f(x_0)$。即$\forall \varepsilon &gt; 0, \exists \delta &gt; 0, \forall x\in D_f, 0 &lt; |x-x_0| &lt; \delta, 使得|f(x)-f(x_0)|&lt;\varepsilon$。</p>
 <p>一致连续：$\forall \varepsilon &gt; 0, \exists \delta &gt; 0, \forall x_1, x_2\in D_f, |x_1-x_2| &lt; \delta, 都有|f(x_1)-f(x_2)|&lt;\varepsilon$。</p>
