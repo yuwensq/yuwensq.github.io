@@ -89,7 +89,7 @@
 <p>这种方法就不写代码了，比较简单。可以用C++里的map很方便的实现。</p>
 ]]></content>
       <tags>
-        <tag>体系结构</tag>
+        <tag>编译</tag>
       </tags>
   </entry>
   <entry>
@@ -189,7 +189,7 @@
 <h2 id="ARM中函数调用中浮点数和整数混合传参"><a href="#ARM中函数调用中浮点数和整数混合传参" class="headerlink" title="ARM中函数调用中浮点数和整数混合传参"></a>ARM中函数调用中浮点数和整数混合传参</h2><p>如果函数参数中既有整数又有浮点数，那么它们互不相干。也就是说，整数用r0-r3寄存器传递，浮点数用s0-s15寄存器传递。有可能有整数寄存器不够用了需要用栈传参，而此时浮点数s寄存器还够用的情况。可以看<a href="https://developer.arm.com/documentation/den0018/a/Compiling-NEON-Instructions/NEON-assembler-and-ABI-restrictions/Passing-arguments-in-NEON-and-floating-point-registers?lang=en">官网</a>。</p>
 ]]></content>
       <tags>
-        <tag>体系结构</tag>
+        <tag>编译</tag>
       </tags>
   </entry>
   <entry>
@@ -326,7 +326,7 @@
 <p>强制类型转换方面，以c++从int强制类型转换为short为例，对于小端模式来说，我们只需要从变量地址开始取出sizeof(short)个字节便可以完成强制类型转换；而对于大端模式来说，我们还需要知道强制类型转换前变量的类型及int类型，从变量地址加sizeof(int)-sizeof(short)处开始，取sizeof(short)个字节才可以完成强制类型转换。</p>
 ]]></content>
       <tags>
-        <tag>细碎知识</tag>
+        <tag>体系结构</tag>
       </tags>
   </entry>
   <entry>
@@ -553,7 +553,7 @@
 <p>That’s all, thank you.</p>
 ]]></content>
       <tags>
-        <tag>CS</tag>
+        <tag>夏令营</tag>
       </tags>
   </entry>
 </search>
