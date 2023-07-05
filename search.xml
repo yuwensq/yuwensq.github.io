@@ -220,21 +220,6 @@
       </tags>
   </entry>
   <entry>
-    <title>大端模式和小端模式的差异和优缺点</title>
-    <url>/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/</url>
-    <content><![CDATA[<center>大端和小端的差异和优缺点</center>
-
-<span id="more"></span>
-<h2 id="大端模式和小端模式的差异"><a href="#大端模式和小端模式的差异" class="headerlink" title="大端模式和小端模式的差异"></a>大端模式和小端模式的差异</h2><p>这个很好理解，大端就是最低有效位位于低地址处；小端就是最低有效位位于高地址处。就不仔细解释了。</p>
-<h2 id="两者的优缺点"><a href="#两者的优缺点" class="headerlink" title="两者的优缺点"></a>两者的优缺点</h2><p>操作系统最后一节课，老师讲了讲linux内核中的网络部分。他提了一嘴大端和小端各自的优势，之前还从未思考过。老师说：“小端方便强制类型转换，大端方便判断正负”。想想还挺有道理。</p>
-<p>以存储一个有符号整数为例，对于大端模式来说，我们只需要访问变量地址的第一个字节便可以根据符号位来得到变量的正负；而对于小端模式来说，我们必须知道变量的具体长度，将变量的地址加上它的长度减一所得到的地址处的字节取出，才能得到变量的正负。</p>
-<p>强制类型转换方面，以c++从int强制类型转换为short为例，对于小端模式来说，我们只需要从变量地址开始取出sizeof(short)个字节便可以完成强制类型转换；而对于大端模式来说，我们还需要知道强制类型转换前变量的类型及int类型，从变量地址加sizeof(int)-sizeof(short)处开始，取sizeof(short)个字节才可以完成强制类型转换。</p>
-]]></content>
-      <tags>
-        <tag>细碎知识</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>zram代码阅读</title>
     <url>/2023/03/26/zram%E4%BB%A3%E7%A0%81%E9%98%85%E8%AF%BB/</url>
     <content><![CDATA[<center>zram</center>
@@ -327,6 +312,21 @@
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> __zram_bvec_read(<span class="keyword">struct</span> zram *zram, <span class="keyword">struct</span> page *page, u32 index,</span><br><span class="line">				<span class="keyword">struct</span> bio *bio, <span class="type">bool</span> partial_io)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">zcomp_strm</span> *<span class="title">zstrm</span>;</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> handle;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> size;</span><br><span class="line">	<span class="type">void</span> *src, *dst;</span><br><span class="line">	<span class="type">int</span> ret;</span><br><span class="line"></span><br><span class="line">	zram_slot_lock(zram, index);</span><br><span class="line">	<span class="keyword">if</span> (zram_test_flag(zram, index, ZRAM_WB)) &#123;</span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">bio_vec</span> <span class="title">bvec</span>;</span></span><br><span class="line"></span><br><span class="line">		zram_slot_unlock(zram, index);</span><br><span class="line">		<span class="comment">/* A null bio means rw_page was used, we must fallback to bio */</span></span><br><span class="line">		<span class="keyword">if</span> (!bio)</span><br><span class="line">			<span class="keyword">return</span> -EOPNOTSUPP;</span><br><span class="line"></span><br><span class="line">		bvec.bv_page = page;</span><br><span class="line">		bvec.bv_len = PAGE_SIZE;</span><br><span class="line">		bvec.bv_offset = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">return</span> read_from_bdev(zram, &amp;bvec,</span><br><span class="line">				zram_get_element(zram, index),</span><br><span class="line">				bio, partial_io);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	handle = zram_get_handle(zram, index);</span><br><span class="line">	<span class="keyword">if</span> (!handle || zram_test_flag(zram, index, ZRAM_SAME)) &#123;</span><br><span class="line">		<span class="type">unsigned</span> <span class="type">long</span> value;</span><br><span class="line">		<span class="type">void</span> *mem;</span><br><span class="line"></span><br><span class="line">		value = handle ? zram_get_element(zram, index) : <span class="number">0</span>;</span><br><span class="line">		mem = kmap_atomic(page);</span><br><span class="line">		zram_fill_page(mem, PAGE_SIZE, value);</span><br><span class="line">		kunmap_atomic(mem);</span><br><span class="line">		zram_slot_unlock(zram, index);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	size = zram_get_obj_size(zram, index);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (size != PAGE_SIZE)</span><br><span class="line">		zstrm = zcomp_stream_get(zram-&gt;comp);</span><br><span class="line"></span><br><span class="line">	src = zs_map_object(zram-&gt;mem_pool, handle, ZS_MM_RO);</span><br><span class="line">	<span class="keyword">if</span> (size == PAGE_SIZE) &#123;</span><br><span class="line">		dst = kmap_atomic(page);</span><br><span class="line">		<span class="built_in">memcpy</span>(dst, src, PAGE_SIZE);</span><br><span class="line">		kunmap_atomic(dst);</span><br><span class="line">		ret = <span class="number">0</span>;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		dst = kmap_atomic(page);</span><br><span class="line">		ret = zcomp_decompress(zstrm, src, size, dst);</span><br><span class="line">		kunmap_atomic(dst);</span><br><span class="line">		zcomp_stream_put(zram-&gt;comp);</span><br><span class="line">	&#125;</span><br><span class="line">	zs_unmap_object(zram-&gt;mem_pool, handle);</span><br><span class="line">	zram_slot_unlock(zram, index);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Should NEVER happen. Return bio error if it does. */</span></span><br><span class="line">	<span class="keyword">if</span> (WARN_ON(ret))</span><br><span class="line">		pr_err(<span class="string">&quot;Decompression failed! err=%d, page=%u\n&quot;</span>, ret, index);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       <tags>
         <tag>OS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大端模式和小端模式的差异和优缺点</title>
+    <url>/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/</url>
+    <content><![CDATA[<center>大端和小端的差异和优缺点</center>
+
+<span id="more"></span>
+<h2 id="大端模式和小端模式的差异"><a href="#大端模式和小端模式的差异" class="headerlink" title="大端模式和小端模式的差异"></a>大端模式和小端模式的差异</h2><p>这个很好理解，大端就是最低有效位位于低地址处；小端就是最低有效位位于高地址处。就不仔细解释了。</p>
+<h2 id="两者的优缺点"><a href="#两者的优缺点" class="headerlink" title="两者的优缺点"></a>两者的优缺点</h2><p>操作系统最后一节课，老师讲了讲linux内核中的网络部分。他提了一嘴大端和小端各自的优势，之前还从未思考过。老师说：“小端方便强制类型转换，大端方便判断正负”。想想还挺有道理。</p>
+<p>以存储一个有符号整数为例，对于大端模式来说，我们只需要访问变量地址的第一个字节便可以根据符号位来得到变量的正负；而对于小端模式来说，我们必须知道变量的具体长度，将变量的地址加上它的长度减一所得到的地址处的字节取出，才能得到变量的正负。</p>
+<p>强制类型转换方面，以c++从int强制类型转换为short为例，对于小端模式来说，我们只需要从变量地址开始取出sizeof(short)个字节便可以完成强制类型转换；而对于大端模式来说，我们还需要知道强制类型转换前变量的类型及int类型，从变量地址加sizeof(int)-sizeof(short)处开始，取sizeof(short)个字节才可以完成强制类型转换。</p>
+]]></content>
+      <tags>
+        <tag>细碎知识</tag>
       </tags>
   </entry>
   <entry>
