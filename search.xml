@@ -557,4 +557,17 @@
         <tag>夏令营</tag>
       </tags>
   </entry>
+  <entry>
+    <title>一个有趣的bug</title>
+    <url>/2023/08/04/%E4%B8%80%E4%B8%AA%E6%9C%89%E8%B6%A3%E7%9A%84bug/</url>
+    <content><![CDATA[<p><center>bug集合</center><br><span id="more"></span></p>
+<p>本文记录编程中遇到的比较好玩的bug。</p>
+<h1 id="unsigned-char"><a href="#unsigned-char" class="headerlink" title="unsigned char?"></a>unsigned char?</h1><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="type">char</span> imm = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (imm = <span class="number">0</span>; imm &lt;= <span class="number">255</span>; imm++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">do_something</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（这代码可以当大一C++考试题感觉）这段代码看起来没啥问题，但是实际运行会发现死循环了。原因是imm是<br>unsigned char类型，范围为0~255，所以imm&lt;=255会一直成立。</p>
+<p>> to be continue</p>
+]]></content>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
 </search>
