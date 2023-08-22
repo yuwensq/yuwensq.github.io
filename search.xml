@@ -315,6 +315,19 @@
       </tags>
   </entry>
   <entry>
+    <title>一个有趣的bug</title>
+    <url>/2023/08/04/%E4%B8%80%E4%B8%AA%E6%9C%89%E8%B6%A3%E7%9A%84bug/</url>
+    <content><![CDATA[<p><center>bug集合</center><br><span id="more"></span></p>
+<p>本文记录编程中遇到的比较好玩的bug。</p>
+<h1 id="unsigned-char"><a href="#unsigned-char" class="headerlink" title="unsigned char?"></a>unsigned char?</h1><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="type">char</span> imm = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (imm = <span class="number">0</span>; imm &lt;= <span class="number">255</span>; imm++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">do_something</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（这代码可以当大一C++考试题感觉）这段代码看起来没啥问题，但是实际运行会发现死循环了。原因是imm是<br>unsigned char类型，范围为0~255，所以imm&lt;=255会一直成立。</p>
+<p>> to be continue</p>
+]]></content>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>大端模式和小端模式的差异和优缺点</title>
     <url>/2022/12/15/%E5%A4%A7%E7%AB%AF%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%B0%8F%E7%AB%AF%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%B7%AE%E5%BC%82%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9/</url>
     <content><![CDATA[<center>大端和小端的差异和优缺点</center>
@@ -327,6 +340,35 @@
 ]]></content>
       <tags>
         <tag>体系结构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>毕昇杯比赛心得</title>
+    <url>/2023/08/04/%E6%AF%95%E6%98%87%E6%9D%AF%E6%AF%94%E8%B5%9B%E5%BF%83%E5%BE%97/</url>
+    <content><![CDATA[<p><center>毕昇杯心得体会</center><br><span id="more"></span></p>
+<p>这里记录一下2023年华为毕昇杯比赛心得经验。<a href="https://github.com/yuwensq/NKUF4_Compiler">仓库链接</a></p>
+<h3 id="经验："><a href="#经验：" class="headerlink" title="经验："></a>经验：</h3><ol>
+<li>做的优化及时合并，虽然自己写的优化跑通了，但是加上其他队友的优化之后往往会浮现出新的bug，要尽早解决。</li>
+<li>编写好用的调试工具，段错误的时候可能打印都打印不出来信息（需要刷新缓冲区），这里建议写一个比较好用的log工具，我们直接把PA实验的Log工具搬过来了。</li>
+<li>编写数据结构合法性检查工具，对于ssa形式的ir中间代码，维护每个operand的def和use的正确性非常重要，这里建议编写检查工具，每执行一个优化pass都进行检查，尽早发现问题，否则可能会导致其他优化不充分或者优化错误。</li>
+<li>尽早调bug，虽然有的bug可能显得不是十分严重，但是也许这些bug是由比较严重的错误导致的，或者会影响其他优化，这里发现bug一定要尽早解决，拖到最后会让人手忙脚乱。</li>
+<li>进行良好的内存管理，如果使用C++进行项目编写，要注意释放内存，否则有时候可能会出现莫名奇妙的错误，尤其是使用STL的时候。可以学学智能指针。</li>
+<li>Patience is the key of life. 要对自己和自己的代码有耐心，往全面了想，只要我们做的比别人更加全面，我们就胜利了。不要着急写出来优化，先想好再编写往往会更快，bug也更少。如果发现没得优化了，就停下看看其他优化是否还有不足，灵感往往是周期性来的，只要编译出来的程序每天都更快一点点，最后就可以快很多。</li>
+<li>多和队友沟通交流，<del>多push队友</del>，遇到自己解决不了的及时和队友商量。不只是队友，也可以多和其他参赛队沟通，大家互补起来可以起到共赢，比如我们决赛的时候就得到了兄弟队伍的帮助，性能分直接++。（当然这个也要分时候）</li>
+<li>代码的可扩展性和可复用性很重要。前者可以使我们以最快的速度添加新的改进（比如我在决赛最后只花了将近30分钟添加了几条新的指令，把一个样例优化到了最好）；后者可以降低我们的代码量和debug量，这里建议把一些常用的比如lva分析、define reach分析、循环相关的分析、纯函数分析等单独编写为工具类。</li>
+</ol>
+<h3 id="具体细节："><a href="#具体细节：" class="headerlink" title="具体细节："></a>具体细节：</h3><ol>
+<li>寄存器分配是最重要的环节之一，别用课上给的线性扫描，又慢生成的指令溢出还多（但是简单好实现）。推荐对线性扫描进行改进，比如使用greedy，或者实现图着色寄存器分配（我们的选择）。此外，尽可能多的使用寄存器，比如我们除了R0-R10，还使用了ip寄存器和lr寄存器，可用的寄存器越多，溢出越少。</li>
+<li>纯函数可以看作表达式，因此做gvn或者cse的时候可以考虑把重复的纯函数也删除了。</li>
+<li>做后端优化的要对汇编代码有较清晰的了解，选择合适的汇编指令，尽量减少访存操作。比如把立即数加载到寄存器中的时候，别一个劲只用ldr r0, =1这样的伪指令，可以根据立即数的范围来选择使用mov或者mvn指令，有的浮点常数也可以直接vmov.f32到s寄存器中。还有就是了解arm的寻址方式，ldr和str的地址操作数可以有好多种不同的形式。等等等等。</li>
+<li>对于某些递归导致栈溢出的程序，做尾调用优化可能比尝试减少栈空间消耗来的更快。</li>
+<li>注意栈对齐，尤其是代码中有浮点数的情况，栈不对齐可能会导致结果为0（这个特征比较明显，就是最后打印出来的浮点数很多是很小的数）。</li>
+<li>学学文字池是干啥的，这个用的好了也可以减少一些多余的指令。</li>
+<li>想得一等奖，得做并行优化。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>编译</tag>
       </tags>
   </entry>
   <entry>
@@ -555,19 +597,6 @@
 ]]></content>
       <tags>
         <tag>夏令营</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>一个有趣的bug</title>
-    <url>/2023/08/04/%E4%B8%80%E4%B8%AA%E6%9C%89%E8%B6%A3%E7%9A%84bug/</url>
-    <content><![CDATA[<p><center>bug集合</center><br><span id="more"></span></p>
-<p>本文记录编程中遇到的比较好玩的bug。</p>
-<h1 id="unsigned-char"><a href="#unsigned-char" class="headerlink" title="unsigned char?"></a>unsigned char?</h1><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="type">char</span> imm = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (imm = <span class="number">0</span>; imm &lt;= <span class="number">255</span>; imm++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">do_something</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>（这代码可以当大一C++考试题感觉）这段代码看起来没啥问题，但是实际运行会发现死循环了。原因是imm是<br>unsigned char类型，范围为0~255，所以imm&lt;=255会一直成立。</p>
-<p>> to be continue</p>
-]]></content>
-      <tags>
-        <tag>C++</tag>
       </tags>
   </entry>
 </search>
