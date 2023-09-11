@@ -593,13 +593,13 @@
 <li>汇编：对于编译生成的汇编代码，汇编器将其翻译为二进制可重定位文件。</li>
 <li>链接：文件中可能引用外部符号，链接主要就是处理这些符号引用，把多个可重定位文件合成一个可执行文件，并计算符号的地址之类的。</li>
 </ol>
-<h2 id="英文"><a href="#英文" class="headerlink" title="英文"></a>英文</h2><h3 id="自我介绍"><a href="#自我介绍" class="headerlink" title="自我介绍"></a>自我介绍</h3><p>Hello everyone!</p>
-<p>// 大致介绍背景<br>I’m Xu WenBin from NANKAI University and my major is computer science.</p>
-<p>// 介绍高中情况，省一<br>Since high school, I have had a strong interest in computer science and start to learn algorithm knowledge. And I won the provincial first prize in NOIP.</p>
-<p>// 介绍大学成绩和奖项<br>First, I love learning very much and have a solid professional knowledge base. During college, I worked hard and got good grades in most of my courses. I got a rank 10 in my major. And I was awarded an Academic Excellence Scholarship for outstanding grades. As for language, besides passing CET-6 with 469 points, I also passed the Chinese Japanese test 4, CJT-4.</p>
-<p>// 介绍项目<br>What’s more, I have strong practical ability and have carried out many engineering projects. For example, I wrote a compiler for a subset of the C language from scratch last year. And I implemented a reliable transmission protocol that supports piplining and congestion control at the application layer based on the UDP protocol.</p>
+<h2 id="英文"><a href="#英文" class="headerlink" title="英文"></a>英文</h2><h3 id="自我介绍"><a href="#自我介绍" class="headerlink" title="自我介绍"></a>自我介绍</h3><p>Good morning/afternoon/evening professors. I am greatly honored to be here for this interview. </p>
+<p>// 大致介绍背景<br>My name is XuWenBin, from XinXiang, HeNan Province, and I am studying computer science at NanKai University.</p>
+<p>// 介绍高中情况，省一<br>Since high school, I have had a strong interest in computer science and started to learn programming and algorithm knowledge. And I won the provincial first prize in NOIP.</p>
+<p>// 介绍大学成绩和奖项<br>In terms of my schoolwork in college, I love learning very much and have a solid professional knowledge base. I worked hard and got good grades in most of my courses, ranking 10th out of 163.And I was awarded an Academic Excellence Scholarship for outstanding grades. As for language, besides passing CET-4 and CET-6 with decent scores, I also learned Japanese and passed the CJT-4.</p>
+<p>// 介绍项目<br>What’s more, I have strong practical ability and took part in many projects. For example, I wrote a compiler for a subset of the C language with my teammates from scratch this summer and won second prize of Bi Sheng Cup. And I implemented a reliable transmission protocol that supports piplining and congestion control at the application layer based on the UDP protocol.</p>
 <p>// 介绍研究兴趣和未来规划<br>In the past three years, I have developed a strong interest in the field of computer systems. In the future, I’m willing to do relevant scientific research work in university.</p>
-<p>That’s all, thank you.</p>
+<p>This concludes my introduction. Thanks for your attention.</p>
 <h3 id="介绍家乡"><a href="#介绍家乡" class="headerlink" title="介绍家乡"></a>介绍家乡</h3><p>I come from Henan province. There are many people in Henan province. And Henan people are very able to bear hardships. What’s more, we don’t really steal manhole covers. As for food, I think HuiMian is the most famous and delicious food of Henan. There are also many places and interests in Henan, such as Longmen Grottoes, white horse temple, Qingming Shanghe Garden and so on.</p>
 ]]></content>
       <tags>
