@@ -15,8 +15,23 @@
     <atom:link href="/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description>Coding For Fun</description>
-    <pubDate>Fri, 04 Aug 2023 13:52:21 GMT</pubDate>
+    <pubDate>Wed, 01 Nov 2023 09:14:26 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>acm dp学习</title>
+      <link>http://yuwensq.github.io/2023/11/01/acm-dp%E5%AD%A6%E4%B9%A0/</link>
+      <guid>http://yuwensq.github.io/2023/11/01/acm-dp%E5%AD%A6%E4%B9%A0/</guid>
+      <pubDate>Wed, 01 Nov 2023 08:21:41 GMT</pubDate>
+      <description>
+      
+        &lt;center&gt;动态规划&lt;/center&gt;
+      
+      </description>
+      
+      
+      <comments>http://yuwensq.github.io/2023/11/01/acm-dp%E5%AD%A6%E4%B9%A0/#disqus_thread</comments>
+    </item>
     
     <item>
       <title>一个有趣的bug</title>
