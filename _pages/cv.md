@@ -9,6 +9,8 @@ redirect_from:
 
 {% include base_path %}
 
+[pdf version]({{ base_path }}/files/CV_Wenbin_Xu.pdf)
+
 Education
 ======
 * Ph.D in Version Control Theory, GitHub University, 2018 (expected)
