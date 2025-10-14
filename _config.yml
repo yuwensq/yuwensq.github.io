@@ -9,9 +9,9 @@
 # Basic Site Settings
 locale                   : "en-US"
 site_theme               : "default"
-title                    : "WenBin Xu"
+title                    : "Wenbin Xu"
 title_separator          : "-"
-name                     : &name "WenBin Xu"
+name                     : &name "Wenbin Xu"
 description              : &description "personal description"
 url                      : https://yuwensq.github.io # the base hostname & protocol for your site e.g. "https://[your GitHub username].github.io" or if you already have some other page hosted on Github then use "https://[your GitHub username].github.io/[Your Repo Name]"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
@@ -22,8 +22,8 @@ repository               : "yuwensq/yuwensq.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.png"
-  name             : "WenBin Xu"
+  avatar           : "fig.jpg"
+  name             : "Wenbin Xu"
   pronouns         : # example: "she/her"  
   bio              : "Trying to be better."
   location         : "Beijing, China"
